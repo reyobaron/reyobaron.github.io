@@ -1,0 +1,16 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DeutschStart logo">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#174a96" />
+      <stop offset="100%" stop-color="#0f2f61" />
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#g1)" />
+  <rect x="50" y="70" width="156" height="16" rx="8" fill="#111" />
+  <rect x="50" y="96" width="156" height="16" rx="8" fill="#cb1f2a" />
+  <rect x="50" y="122" width="156" height="16" rx="8" fill="#d3ae41" />
+  <circle cx="78" cy="183" r="24" fill="#fff" />
+  <path d="M70 183h16" stroke="#174a96" stroke-width="6" stroke-linecap="round" />
+  <path d="M78 175v16" stroke="#174a96" stroke-width="6" stroke-linecap="round" />
+  <text x="118" y="192" fill="#fff" font-size="26" font-family="Trebuchet MS, Segoe UI, sans-serif" font-weight="700">DE</text>
+</svg>

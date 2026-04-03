@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeutschStart | Make it in Germany</title>
+    <meta name="description" content="DeutschStart - Practical German learning app with sentence playback." />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="DeutschStart" />
+    <link rel="apple-touch-icon" href="assets/logo.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+
+    <main class="app-shell">
+      <header class="hero">
+        <div class="brand-row">
+          <img src="assets/logo.svg" alt="DeutschStart logo" class="logo" />
+          <div>
+            <h1>DeutschStart</h1>
+            <p class="subtitle">Learn Basic German for Real Life</p>
+          </div>
+          <button id="themeToggleBtn" class="theme-btn" type="button" aria-label="Toggle theme">Light Mode</button>
+        </div>
+        <p class="tagline">Make it in Germany</p>
+        <p class="context-line">This application is being referred to the German Embassy in Sarajevo.</p>
+        <p class="disclaimer">By RUDWAN BAROUNI.</p>
+      </header>
+
+      <section class="mode-panel">
+        <h2>Choose Learning Mode</h2>
+        <div class="mode-buttons">
+          <button id="streetModeBtn" class="mode-btn active">Street Mode</button>
+          <button id="barouniModeBtn" class="mode-btn">Barouni Mode</button>
+        </div>
+        <p id="modeDescription" class="mode-description"></p>
+
+        <p class="play-hint">Tap Play on each sentence to hear it.</p>
+      </section>
+
+      <section class="levels-panel">
+        <h2>8 Practical Levels</h2>
+        <div id="levelsGrid" class="levels-grid"></div>
+      </section>
+
+      <section class="content-panel">
+        <div class="content-header">
+          <h2 id="lessonTitle">Level 1</h2>
+          <span id="lessonBadge" class="lesson-badge"></span>
+        </div>
+        <p id="lessonGoal" class="lesson-goal"></p>
+
+        <div id="categoryChips" class="category-chips"></div>
+
+        <div class="phrases-wrapper">
+          <h3>Core Phrases</h3>
+          <div id="phrasesList" class="phrases-list"></div>
+        </div>
+
+        <div class="dialog-wrapper">
+          <h3>Mini Dialog</h3>
+          <div id="dialogList" class="dialog-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
