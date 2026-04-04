@@ -1587,23 +1587,14 @@
     setTimeout(clearSoundListeners, 7000);
   })();
 
-  // Smart device handling: APK download stays available on all devices.
+  // Smart device handling: keep all actions visible on every device.
   (function() {
-    var ua = navigator.userAgent || '';
-    var isAndroid = /Android/i.test(ua);
-
     var androidBtns = document.querySelectorAll('.download-btn-android');
     var iosBtns = document.querySelectorAll('.download-btn-ios');
 
-    if (isAndroid) {
-      // Android phone: prioritize APK, hide web app button.
-      androidBtns.forEach(function(btn) { btn.style.display = 'inline-flex'; });
-      iosBtns.forEach(function(btn) { btn.style.display = 'none'; });
-    } else {
-      // Other devices: keep both options visible so APK can still be downloaded.
-      androidBtns.forEach(function(btn) { btn.style.display = 'inline-flex'; });
-      iosBtns.forEach(function(btn) { btn.style.display = 'inline-flex'; });
-    }
+    // Always show both APK and Open App buttons.
+    androidBtns.forEach(function(btn) { btn.style.display = 'inline-flex'; });
+    iosBtns.forEach(function(btn) { btn.style.display = 'inline-flex'; });
   })();
 </script>
 </body>
