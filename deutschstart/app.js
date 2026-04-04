@@ -408,10 +408,15 @@ if (supportsSpeech) {
 }
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(() => {
-      // Ignore registration errors in unsupported/strict environments.
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => {
+      const scope = registration.scope || '';
+      if (scope.includes('/deutschstart/')) {
+        registration.unregister();
+      }
     });
+  }).catch(() => {
+    // Ignore service worker cleanup errors.
   });
 }
 
