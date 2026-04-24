@@ -1,9 +1,9 @@
-const CACHE_NAME = 'deutschstart-v1';
+const CACHE_NAME = 'deutschstart-v2';
 const APP_SHELL = [
   './',
   './index.html',
-  './styles.css',
-  './app.js',
+  './styles.css?v=20260424',
+  './app.js?v=20260424',
   './manifest.webmanifest',
   './assets/logo.svg'
 ];
