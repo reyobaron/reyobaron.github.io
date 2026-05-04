@@ -358,6 +358,17 @@
       </div>
     </div>
 
+    <div class="card" style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid #4ade8066">
+      <h2 style="color:#4ade80">🚀 Auto-Apply — Leila Does It For You</h2>
+      <p style="color:#ccc;font-size:.9rem;margin-bottom:14px">Tell Leila a job title and city. She searches her database of 40+ German companies, writes your full cover letter, and opens a Gmail draft for each — you just click <strong>Send</strong>.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <input id="autoapply-role" type="text" placeholder="Job title (e.g. IT Specialist)" style="flex:1;min-width:160px;padding:10px 14px;border-radius:8px;border:1px solid #4ade8066;background:#0d1117;color:#fff"/>
+        <input id="autoapply-city" type="text" placeholder="City (e.g. Berlin)" style="flex:1;min-width:120px;padding:10px 14px;border-radius:8px;border:1px solid #4ade8066;background:#0d1117;color:#fff"/>
+        <button onclick="dashAutoApply()" style="padding:10px 22px;background:#4ade80;color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.95rem">🚀 Find &amp; Apply</button>
+      </div>
+      <p style="font-size:.78rem;color:#888;margin-top:8px">Opens up to 5 Gmail drafts — one per matching company. Full cover letter pre-written. You click Send.</p>
+    </div>
+
     <div class="grid-2" style="margin-bottom:20px">
       <div class="stat-card">
         <div class="num" id="stat-total">0</div>
@@ -1028,6 +1039,96 @@ Referenzen auf Anfrage erhältlich.`;
 // ══════════════════════════════════════════════════════════
 //  JOB PORTALS
 // ══════════════════════════════════════════════════════════
+// German company database — name, HR email, city, job categories
+const companyDB = [
+  // ── IT / Tech ──
+  { name:'SAP',                 hrEmail:'karriere@sap.com',             city:'Walldorf',       cats:['it','developer','software','erp','data'] },
+  { name:'Siemens',             hrEmail:'jobs@siemens.com',             city:'Munich',         cats:['it','engineer','automation','software'] },
+  { name:'Deutsche Telekom',    hrEmail:'bewerbung@telekom.de',         city:'Bonn',           cats:['it','developer','network','support','digital'] },
+  { name:'Bosch',               hrEmail:'karriere@de.bosch.com',        city:'Stuttgart',      cats:['it','engineer','software','automation'] },
+  { name:'BMW Group',           hrEmail:'bewerbung@bmw.de',             city:'Munich',         cats:['it','engineer','software','data'] },
+  { name:'Volkswagen',          hrEmail:'bewerbung@volkswagen.de',      city:'Wolfsburg',      cats:['it','engineer','software','automation'] },
+  { name:'T-Systems',           hrEmail:'recruiting@t-systems.com',     city:'Frankfurt',      cats:['it','developer','cloud','support','network'] },
+  { name:'Capgemini Deutschland',hrEmail:'germany.recruiting@capgemini.com', city:'Berlin',   cats:['it','developer','consultant','cloud','data'] },
+  { name:'Accenture Deutschland',hrEmail:'germany.careers@accenture.com', city:'Munich',      cats:['it','developer','consultant','digital','data'] },
+  { name:'IBM Deutschland',     hrEmail:'ibm_bewerber@de.ibm.com',      city:'Ehningen',       cats:['it','developer','cloud','data','ai'] },
+  { name:'Microsoft Deutschland',hrEmail:'careers@microsoft.com',       city:'Munich',         cats:['it','developer','cloud','software','ai'] },
+  { name:'Google Deutschland',  hrEmail:'google-careers@google.com',    city:'Hamburg',        cats:['it','developer','data','ai','software'] },
+  { name:'Amazon Deutschland',  hrEmail:'bewerbungen@amazon.de',        city:'Berlin',         cats:['it','developer','logistics','ecommerce','data'] },
+  { name:'Zalando',             hrEmail:'jobs@zalando.de',              city:'Berlin',         cats:['it','developer','ecommerce','marketing','data'] },
+  { name:'Otto Group',          hrEmail:'karriere@otto.de',             city:'Hamburg',        cats:['it','developer','ecommerce','marketing'] },
+  { name:'Infosys BPM Germany', hrEmail:'germany.careers@infosys.com',  city:'Frankfurt',      cats:['it','developer','consultant','support'] },
+  { name:'Deloitte Deutschland',hrEmail:'recruiting.de@deloitte.com',   city:'Munich',         cats:['it','consultant','data','digital','finance'] },
+  { name:'KPMG Deutschland',    hrEmail:'karriere@kpmg.de',             city:'Frankfurt',      cats:['it','consultant','data','digital','finance'] },
+  // ── Architecture / Engineering / CAD ──
+  { name:'Zaha Hadid Architects Germany',hrEmail:'jobs@zaha-hadid.com', city:'Berlin',         cats:['architecture','cad','bim','designer'] },
+  { name:'Gensler Germany',     hrEmail:'frankfurt@gensler.com',        city:'Frankfurt',      cats:['architecture','cad','bim','interior','designer'] },
+  { name:'AECOM Germany',       hrEmail:'germany.careers@aecom.com',    city:'Hamburg',        cats:['architecture','engineer','cad','bim','project manager'] },
+  { name:'WSP Germany',         hrEmail:'karriere@wsp.com',             city:'Frankfurt',      cats:['architecture','engineer','cad','bim'] },
+  { name:'Arup Deutschland',    hrEmail:'germany.jobs@arup.com',        city:'Berlin',         cats:['architecture','engineer','cad','bim','structural'] },
+  { name:'Drees & Sommer',      hrEmail:'bewerbung@dreso.com',          city:'Stuttgart',      cats:['architecture','project manager','bim','real estate'] },
+  { name:'Albert Speer + Partner',hrEmail:'jobs@as-p.de',              city:'Frankfurt',      cats:['architecture','urban','cad','bim','designer'] },
+  { name:'Nemetschek Group',    hrEmail:'karriere@nemetschek.com',      city:'Munich',         cats:['architecture','cad','bim','software','it'] },
+  { name:'Trimble Deutschl.',   hrEmail:'germany.hr@trimble.com',       city:'Göttingen',      cats:['cad','survey','engineer','bim','software'] },
+  { name:'Autodesk Germany',    hrEmail:'careers@autodesk.com',         city:'Munich',         cats:['cad','bim','software','it','designer'] },
+  // ── Design / Marketing / Media ──
+  { name:'Jung von Matt',       hrEmail:'jobs@jvm.com',                 city:'Hamburg',        cats:['marketing','designer','creative','media','digital'] },
+  { name:'BBDO Germany',        hrEmail:'karriere@bbdo.de',             city:'Düsseldorf',     cats:['marketing','designer','creative','media'] },
+  { name:'Serviceplan Group',   hrEmail:'jobs@serviceplan.com',         city:'Munich',         cats:['marketing','digital','designer','creative','media'] },
+  { name:'Scholz & Friends',    hrEmail:'jobs@s-f.com',                 city:'Berlin',         cats:['marketing','designer','creative','digital'] },
+  { name:'Hays Deutschland',    hrEmail:'bewerbung@hays.de',            city:'Mannheim',       cats:['it','engineer','marketing','project manager','designer','support'] },
+  { name:'Randstad Deutschland',hrEmail:'bewerbung@randstad.de',        city:'Frankfurt',      cats:['it','engineer','marketing','support','logistics'] },
+  { name:'Adecco Deutschland',  hrEmail:'info.de@adecco.com',           city:'Cologne',        cats:['it','engineer','marketing','support','logistics'] },
+  // ── General / Finance / Logistics ──
+  { name:'DHL Group',           hrEmail:'bewerbung@dhl.com',            city:'Bonn',           cats:['logistics','it','project manager','support','digital'] },
+  { name:'DB Schenker',         hrEmail:'karriere@dbschenker.com',      city:'Frankfurt',      cats:['logistics','it','project manager','support'] },
+  { name:'Allianz',             hrEmail:'karriere@allianz.de',          city:'Munich',         cats:['it','finance','digital','data','project manager'] },
+  { name:'Deutsche Bank',       hrEmail:'karriere@db.com',              city:'Frankfurt',      cats:['it','finance','digital','data'] },
+  { name:'Commerzbank',         hrEmail:'bewerbung@commerzbank.com',    city:'Frankfurt',      cats:['it','finance','digital','data'] },
+];
+
+// Match companies to a role keyword
+function matchCompanies(role, city, maxCount) {
+  const r = role.toLowerCase();
+  const c = city.toLowerCase();
+  const keywords = r.split(/\s+/);
+
+  const scored = companyDB.map(co => {
+    let score = 0;
+    keywords.forEach(kw => {
+      if (co.cats.some(cat => cat.includes(kw) || kw.includes(cat))) score += 2;
+    });
+    if (co.city.toLowerCase().includes(c)) score += 1;
+    return { co, score };
+  });
+
+  return scored
+    .filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, maxCount || 5)
+    .map(x => x.co);
+}
+
+// Find matching companies and open a Gmail draft for each
+function findAndApply(role, city, maxCount) {
+  city = city || 'Germany';
+  maxCount = maxCount || 5;
+  const matches = matchCompanies(role, city, maxCount);
+
+  if (!matches.length) return [];
+
+  matches.forEach((co, i) => {
+    setTimeout(() => {
+      const draft = prepareApplicationPack(role, co.name, co.city || city);
+      const gmailUrl = buildGmailComposeUrl(co.hrEmail, draft.subject, draft.body);
+      window.open(gmailUrl, '_blank', 'noopener');
+    }, i * 1000);
+  });
+
+  return matches;
+}
+
+// ══════════════════════════════════════════════════════════
 const portals = [
   { name: 'Indeed Deutschland',       icon: '🔵', color: '#003366', desc: 'Largest international job board in Germany', url: (k,l) => `https://de.indeed.com/jobs?q=${encodeURIComponent(k)}&l=${encodeURIComponent(l)}` },
   { name: 'LinkedIn Jobs',            icon: '🔗', color: '#0077b5', desc: 'Professional network – create a strong profile', url: (k,l) => `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(k)}&location=${encodeURIComponent(l)}` },
@@ -1062,6 +1163,20 @@ function renderPortals() {
 function setJobSearch(role) {
   document.getElementById('job-keyword').value = role;
   renderPortals();
+}
+
+function dashAutoApply() {
+  const role = (document.getElementById('autoapply-role').value || '').trim() || 'IT Specialist';
+  const city = (document.getElementById('autoapply-city').value || '').trim() || 'Berlin';
+  const matches = findAndApply(role, city, 5);
+  if (!matches.length) {
+    alert(`No matching companies found for "${role}" in "${city}". Try IT Specialist, CAD Designer, Software Developer, etc.`);
+    return;
+  }
+  switchTab('chat');
+  const rows = matches.map((co, i) => `${i+1}. ${co.name} — ${co.city} — ${co.hrEmail}`).join('\n');
+  const msg = `🚀 Auto-apply started!\n\nOpened ${matches.length} Gmail drafts:\n${rows}\n\nEach tab has the full cover letter pre-written. Just click Send in each Gmail tab.\n\nAfter sending, type: "sent [Company Name]" and I mark it Applied.`;
+  addMessage('Leila', msg);
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1209,8 +1324,10 @@ let leilaTasks = JSON.parse(localStorage.getItem('leila_tasks') || '[]');
 let leilaCvAsset = localStorage.getItem('leila_cv_asset') || '';
 
 const quickPrompts = [
-  { label: '🤖 Autopilot apply (Gmail+jobs)', msg: 'Apply to IT Specialist at Siemens in Berlin email hr@siemens.com' },
-  { label: '📦 Mass apply to 3 companies', msg: 'Apply to IT Specialist at Siemens, BMW, SAP in Berlin' },
+  { label: '🚀 Auto-apply IT jobs Berlin', msg: 'Find and apply IT Specialist in Berlin' },
+  { label: '🏗 Auto-apply CAD jobs Munich', msg: 'Find and apply CAD Designer in Munich' },
+  { label: '📦 Mass apply 3 companies', msg: 'Apply to IT Specialist at Siemens, SAP, Deutsche Telekom in Berlin' },
+  { label: '🤖 Single apply with email', msg: 'Apply to IT Specialist at Siemens in Berlin email jobs@siemens.com' },
   { label: '🔍 Find IT jobs now', msg: 'Find IT Specialist jobs in Berlin' },
   { label: '🚀 Find jobs and open portals', msg: 'Find jobs for IT Specialist in Berlin and open the job portals now.' },
   { label: '📨 Prepare application package', msg: 'Apply to IT Specialist at Siemens in Berlin.' },
@@ -1545,6 +1662,19 @@ function localFallback(text) {
 Use these search links now:<br/>${linkHtml}
 
 I also added a task: Apply to 3 ${role} roles in ${location}.`;
+  }
+
+  // ── find and apply: searches DB, opens Gmail drafts automatically ──
+  if (/(find and apply|auto apply|search and apply|apply for me)/i.test(t)) {
+    const { role, location } = parseRoleLocation(text);
+    const matches = findAndApply(role, location, 5);
+    if (!matches.length) {
+      return `No matching companies found for "${esc(role)}" in "${esc(location)}" in my database.<br/>Try: <em>"find and apply IT Specialist in Berlin"</em> or <em>"find and apply CAD Designer in Munich"</em>.`;
+    }
+    const rows = matches.map((co, i) =>
+      `<strong>${i+1}. ${esc(co.name)}</strong> — ${esc(co.city)} — 📧 ${esc(co.hrEmail)}`
+    ).join('<br/>');
+    return `🚀 Leila is applying for you! Opened <strong>${matches.length} Gmail drafts</strong> (staggered 1s each).<br/><br/>${rows}<br/><br/>Each Gmail tab has:<br/>✅ Company HR email pre-filled<br/>✅ Full professional cover letter in the body<br/>✅ Your CV link included<br/><br/><strong>Just click Send in each tab. That's it.</strong><br/><br/>After sending, type: <strong>sent [Company Name]</strong> and I mark it Applied.`;
   }
 
   // ── mass apply: "apply to [job] at CompanyA, CompanyB, CompanyC in Berlin" ──
