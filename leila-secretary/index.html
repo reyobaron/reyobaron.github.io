@@ -670,6 +670,26 @@ function switchTab(id) {
 // ══════════════════════════════════════════════════════════
 let lastLetter = { company: '', job: '' };
 
+// ── Pure letter builder — usable from both UI and chat autopilot ──
+function buildLetterText(company, jobtitle, city, lang, keywords) {
+  lang = lang || 'en';
+  keywords = keywords || '';
+  const today = new Date().toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-GB', { day:'2-digit', month:'long', year:'numeric' });
+  let keySkills = '';
+  if (keywords) {
+    keySkills = lang === 'de'
+      ? `\nAnhand Ihrer Stellenausschreibung erkenne ich, dass Sie folgende Kompetenzen suchen: ${keywords}. Genau diese bringe ich mit.`
+      : `\nReviewing your job advertisement, I note you are seeking: ${keywords}. I am confident my background aligns closely with these requirements.`;
+  }
+  let letter = '';
+  if (lang === 'en') {
+    letter = `${CV.name}\n${CV.address}\n${CV.phone} | ${CV.email}\n${CV.website}\n\n${today}\n\nHiring Manager\n${company}\n${city}\n\nRe: Application for the position of ${jobtitle}\n\nDear Hiring Manager,\n\nI am writing to express my strong interest in the ${jobtitle} position at ${company}. With a Bachelor's degree in Architecture, hands-on IT experience, and a proven track record in project management and digital operations, I am confident in my ability to contribute meaningfully to your team.${keySkills}\n\nOver the past decade I have built a versatile career spanning architectural design (Autodesk AutoCAD, 3D modelling), IT systems (VS Code, GitHub Copilot, AI-assisted workflows), digital marketing, and business operations. As the founder and operations manager of my own architectural and real estate firm, I successfully managed contracts for international clients including diplomatic missions and multinational organisations — developing strong communication, organisational, and problem-solving skills.\n\nI am a self-driven professional who adapts quickly to new environments. Having studied in the UK (IELTS 5.5) and trained in Spain, I am experienced working in international, multicultural settings. I am currently based in Bosnia and Herzegovina and am available to relocate to Germany.\n\nI would welcome the opportunity to discuss how my background can benefit ${company}. I am available for an interview at your convenience and can provide further work samples, references, or portfolio materials upon request.\n\nThank you for your time and consideration.\n\nYours sincerely,\n\n${CV.name}\n${CV.phone} | ${CV.email}\n${CV.linkedin}`;
+  } else {
+    letter = `${CV.name}\n${CV.address}\n${CV.phone} | ${CV.email}\n${CV.website}\n\n${today}\n\nPersonalmanagement\n${company}\n${city}\n\nBewerbung als ${jobtitle}\n\nSehr geehrte Damen und Herren,\n\nmit großem Interesse habe ich Ihre Stellenausschreibung für die Position als ${jobtitle} bei ${company} gelesen. Als erfahrener IT-Spezialist und Architekturingenieur mit mehr als zehn Jahren internationaler Berufserfahrung möchte ich meine Kenntnisse und Fähigkeiten in Ihr Unternehmen einbringen.${keySkills}\n\nMeine berufliche Laufbahn umfasst architektonische Planung und Konstruktion (Autodesk AutoCAD, 3D-Modellierung), IT-Systeme (VS Code, GitHub Copilot, KI-gestützte Workflows), digitales Marketing sowie Unternehmensführung. Als Gründer und Betriebsleiter meines eigenen Architektur- und Immobilienunternehmens habe ich erfolgreich Projekte für internationale Kunden – darunter diplomatische Vertretungen und multinationale Organisationen – geleitet und dabei ausgeprägte Kommunikations- und Organisationsfähigkeiten entwickelt.\n\nIch bin eine ergebnisorientierte, eigenverantwortlich handelnde Fachkraft mit nachgewiesener Anpassungsfähigkeit in internationalen Arbeitsumgebungen. Mein Studium in Großbritannien sowie meine Ausbildung in Spanien haben mein interkulturelles Verständnis gefestigt. Ich lebe derzeit in Bosnien und Herzegowina und bin bereit, nach Deutschland umzuziehen.\n\nIch freue mich auf ein persönliches Gespräch, bei dem ich Ihnen meine Qualifikationen und Motivation ausführlicher vorstellen kann. Portfolio-Arbeiten und Referenzen stelle ich Ihnen gerne auf Anfrage zur Verfügung.\n\nMit freundlichen Grüßen,\n\n${CV.name}\n${CV.phone} | ${CV.email}\n${CV.linkedin}`;
+  }
+  return letter;
+}
+
 function generateCoverLetter() {
   const company  = document.getElementById('cl-company').value.trim() || '[Company Name]';
   const jobtitle = document.getElementById('cl-jobtitle').value.trim() || '[Job Title]';
@@ -1189,7 +1209,9 @@ let leilaTasks = JSON.parse(localStorage.getItem('leila_tasks') || '[]');
 let leilaCvAsset = localStorage.getItem('leila_cv_asset') || '';
 
 const quickPrompts = [
-  { label: '🤖 Autopilot apply (Gmail+jobs)', msg: 'Autopilot apply to IT Specialist at Siemens in Berlin email hr@siemens.com' },
+  { label: '🤖 Autopilot apply (Gmail+jobs)', msg: 'Apply to IT Specialist at Siemens in Berlin email hr@siemens.com' },
+  { label: '📦 Mass apply to 3 companies', msg: 'Apply to IT Specialist at Siemens, BMW, SAP in Berlin' },
+  { label: '🔍 Find IT jobs now', msg: 'Find IT Specialist jobs in Berlin' },
   { label: '🚀 Find jobs and open portals', msg: 'Find jobs for IT Specialist in Berlin and open the job portals now.' },
   { label: '📨 Prepare application package', msg: 'Apply to IT Specialist at Siemens in Berlin.' },
   { label: '✉️ Write a cover letter for a tech job', msg: 'Write me a cover letter in English for an IT Specialist position at a German tech company.' },
@@ -1380,14 +1402,16 @@ function extractApplicationDetails(rawText) {
   };
 }
 
-function prepareApplicationPack(job, company, city) {
+function prepareApplicationPack(job, company, city, lang) {
+  lang = lang || 'en';
+  // Fill cover letter tab
   document.getElementById('cl-company').value = company;
   document.getElementById('cl-jobtitle').value = job;
   document.getElementById('cl-city').value = city;
-  document.getElementById('cl-lang').value = 'en';
+  document.getElementById('cl-lang').value = lang;
   generateCoverLetter();
-  switchTab('cover');
 
+  // Track
   const apps = getApps();
   apps.push({
     id: Date.now(),
@@ -1396,30 +1420,40 @@ function prepareApplicationPack(job, company, city) {
     city,
     date: new Date().toISOString().split('T')[0],
     status: 'prepared',
-    notes: 'Prepared by Leila chat command'
+    notes: 'Prepared by Leila autopilot'
   });
   saveApps(apps);
   updateStats();
 
+  // Build FULL cover letter for email body
+  const fullLetter = buildLetterText(company, job, city, lang, '');
+  const cvLine = leilaCvAsset
+    ? `\n\n--- CV/Portfolio ---\n${leilaCvAsset}`
+    : `\n\n--- Profile ---\n${CV.website}\nLinkedIn: ${CV.linkedin}`;
+  const bodyText = fullLetter + cvLine;
   const subject = encodeURIComponent(`Application for ${job} - ${CV.name}`);
-  const bodyText =
-`Dear Hiring Team at ${company},
-
-Please find my application for the ${job} position in ${city}. I have prepared my cover letter and CV and would appreciate the opportunity to discuss my fit for this role.
-
-Kind regards,
-${CV.name}
-${CV.phone}
-${CV.email}`
-  ;
   const body = encodeURIComponent(bodyText);
 
-  return {
-    subject,
-    body,
-    bodyText,
-    mailto: `mailto:?subject=${subject}&body=${body}`
-  };
+  return { subject, body, bodyText, mailto: `mailto:?subject=${subject}&body=${body}` };
+}
+
+function massApply(targets) {
+  // targets = [{job, company, city, email}]
+  const results = [];
+  targets.forEach((t, i) => {
+    setTimeout(() => {
+      const draft = prepareApplicationPack(t.job, t.company, t.city);
+      const cvLine = leilaCvAsset
+        ? `\n\n--- CV/Portfolio ---\n${leilaCvAsset}`
+        : `\n\n--- Profile ---\n${CV.website}\nLinkedIn: ${CV.linkedin}`;
+      const richerBody = encodeURIComponent(`${decodeURIComponent(draft.body)}${cvLine}`);
+      if (t.email) {
+        const url = buildGmailComposeUrl(t.email, draft.subject, richerBody);
+        window.open(url, '_blank', 'noopener');
+      }
+    }, i * 900); // stagger tabs so browser doesn't block
+  });
+  return results;
 }
 
 function extractEmail(rawText) {
@@ -1513,50 +1547,65 @@ Use these search links now:<br/>${linkHtml}
 I also added a task: Apply to 3 ${role} roles in ${location}.`;
   }
 
+  // ── mass apply: "apply to [job] at CompanyA, CompanyB, CompanyC in Berlin" ──
+  if (t.includes('apply') && (text.includes(',') || /\bapply to .+ at .+ and .+/i.test(text))) {
+    const jobMatch = text.match(/apply(?:\s+to)?\s+(.+?)\s+at\s+(.+?)(?:\s+in\s+([a-zA-Z\s.,-]+))?$/i);
+    if (jobMatch) {
+      const job = jobMatch[1].trim().replace(/[.,;:!?]+$/g,'');
+      const companiesRaw = jobMatch[2];
+      const city = (jobMatch[3] || 'Germany').trim().replace(/[.,;:!?]+$/g,'');
+      const companies = companiesRaw.split(/,| and /).map(c => c.trim().replace(/[.,;:!?]+$/g,'')).filter(Boolean);
+      if (companies.length > 1) {
+        const targets = companies.map(c => ({ job, company: c, city, email: '' }));
+        massApply(targets);
+        const rows = companies.map(c => `<strong>${esc(c)}</strong> — ${esc(job)}, ${esc(city)}`).join('<br/>');
+        return `Mass apply started for ${companies.length} companies:<br/>${rows}<br/><br/>I opened a Gmail draft for each company (staggered by 1 second so browser allows it). Each email has the full cover letter already written.<br/><br/>Review each Gmail tab and click Send. Then type: "sent [Company]" for each one.`;
+      }
+    }
+  }
+
   if (t.includes('apply')) {
     const details = extractApplicationDetails(text);
     if (!details) {
-      return 'I can execute the application workflow, but I need details in this format: "Apply to IT Specialist at Siemens in Berlin email hr@siemens.com".';
+      return 'Give me details like:\n"Apply to IT Specialist at Siemens in Berlin email hr@siemens.com"\n\nOr mass apply:\n"Apply to IT Specialist at Siemens, BMW, SAP in Berlin"';
     }
 
-    const isAutopilot = t.includes('autopilot') || t.includes('auto apply') || t.includes('apply now');
+    const isAutopilot = t.includes('autopilot') || t.includes('auto') || t.includes('now');
     const email = extractEmail(text);
+    // prepareApplicationPack now builds the FULL cover letter as email body
     const draft = prepareApplicationPack(details.job, details.company, details.city);
-    const cvLine = leilaCvAsset
-      ? `\nCV attachment/link: ${leilaCvAsset}`
-      : `\nCV profile: ${CV.website} (Use this profile if file attachment is not available).`;
-    const richerBody = encodeURIComponent(`${decodeURIComponent(draft.body)}${cvLine}\nLinkedIn: ${CV.linkedin}`);
 
-    let submitLink = `<a href="${draft.mailto}" target="_blank">Open email draft</a>`;
-
+    let gmailUrl = '';
     if (email) {
-      const gmailUrl = buildGmailComposeUrl(email, draft.subject, richerBody);
+      gmailUrl = buildGmailComposeUrl(email, draft.subject, draft.body);
       window.open(gmailUrl, '_blank', 'noopener');
-      submitLink = `<a href="${gmailUrl}" target="_blank">Open Gmail draft to ${email}</a>`;
-      if (isAutopilot) {
-        openAutopilotJobTabs(details.job, details.city, details.company);
-      }
     }
 
-    addTask(`Submit application to ${details.company} for ${details.job}`);
+    if (isAutopilot) {
+      openAutopilotJobTabs(details.job, details.city, details.company);
+    }
 
-    return `Application workflow executed for ${details.company}.
+    addTask(`✅ Confirm sent: ${details.company} — ${details.job}`);
 
-Done now:
-- Cover letter generated and prefilled.
-- Tracker entry created with status Prepared.
-- Task added for final submission.
-- Submission draft ready: ${submitLink}
+    const gmailBtn = email
+      ? `<br/><a href="${gmailUrl}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;padding:8px 18px;background:#4ade80;color:#000;border-radius:8px;text-decoration:none;font-weight:700">📧 Open Gmail Draft</a>`
+      : `<br/><a href="${draft.mailto}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;padding:8px 18px;background:#7c6aff;color:#fff;border-radius:8px;text-decoration:none;font-weight:700">📧 Open Email Draft</a>`;
 
-Autopilot actions:
-- ${isAutopilot ? 'Opened Gmail draft and job tabs (Indeed + LinkedIn) for immediate submission.' : 'Type "autopilot apply ..." to also open job tabs automatically.'}
-- ${leilaCvAsset ? `Using saved CV asset: ${esc(leilaCvAsset)}` : 'No CV file link saved yet. Use command: set cv https://your-cv-link'}
+    const indeedUrl = `https://de.indeed.com/jobs?q=${encodeURIComponent(details.job)}&l=${encodeURIComponent(details.city)}`;
+    const linkedinUrl = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(details.job + ' ' + details.company)}&location=${encodeURIComponent(details.city)}`;
 
-Next step:
-- Review the Gmail draft and click Send.
-- Then type: "sent ${details.company}" and I will mark it as Applied.
+    return `✅ Application ready for <strong>${esc(details.company)}</strong> (${esc(details.job)}, ${esc(details.city)}).
 
-Note: full auto-send without your final click is blocked by Gmail and website security policies.`;
+What Leila did:
+- Full cover letter generated (with your name, contact, and full professional text).
+- Tracker entry created (status: Prepared).
+- ${email ? `Gmail opened to <strong>${esc(email)}</strong> with full letter in the body.` : 'No email found — use the draft button below or add "email hr@company.com".'}
+- ${leilaCvAsset ? `CV link included: ${esc(leilaCvAsset)}` : 'Tip: type "set cv https://..." to include your CV file link automatically.'}
+${gmailBtn}
+<a href="${indeedUrl}" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;margin-left:6px;padding:8px 14px;background:#003366;color:#fff;border-radius:8px;text-decoration:none;font-weight:700">🔵 Indeed</a>
+<a href="${linkedinUrl}" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;margin-left:6px;padding:8px 14px;background:#0077b5;color:#fff;border-radius:8px;text-decoration:none;font-weight:700">🔗 LinkedIn</a>
+
+After you click Send in Gmail, type: <strong>"sent ${esc(details.company)}"</strong> and I mark it Applied.`;
   }
 
   if (t.startsWith('task:')) {
