@@ -836,8 +836,8 @@ function renderTracker() {
     body.innerHTML = `<div class="empty-state"><span class="icon">📭</span>No applications yet. Add one above or generate a cover letter!</div>`;
     return;
   }
-  const statusMap = { applied: 'badge-applied', waiting: 'badge-waiting', interview: 'badge-interview', offer: 'badge-offer', rejected: 'badge-rejected' };
-  const statusLabel = { applied:'Applied', waiting:'Waiting', interview:'Interview', offer:'Offer!', rejected:'Rejected' };
+  const statusMap = { prepared: 'badge-waiting', applied: 'badge-applied', waiting: 'badge-waiting', interview: 'badge-interview', offer: 'badge-offer', rejected: 'badge-rejected' };
+  const statusLabel = { prepared:'Prepared', applied:'Applied', waiting:'Waiting', interview:'Interview', offer:'Offer!', rejected:'Rejected' };
   body.innerHTML = `
     <table class="tracker-table">
       <thead><tr>
@@ -851,7 +851,7 @@ function renderTracker() {
           <td>${esc(a.date||'')}</td>
           <td>
             <select onchange="updateStatus(${a.id},this.value)" style="padding:4px 8px;font-size:.78rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text)">
-              ${['applied','waiting','interview','offer','rejected'].map(s =>
+              ${['prepared','applied','waiting','interview','offer','rejected'].map(s =>
                 `<option value="${s}"${a.status===s?' selected':''}>${statusLabel[s]}</option>`).join('')}
             </select>
           </td>
@@ -1393,14 +1393,14 @@ function prepareApplicationPack(job, company, city) {
     job,
     city,
     date: new Date().toISOString().split('T')[0],
-    status: 'waiting',
+    status: 'prepared',
     notes: 'Prepared by Leila chat command'
   });
   saveApps(apps);
   updateStats();
 
   const subject = encodeURIComponent(`Application for ${job} - ${CV.name}`);
-  const body = encodeURIComponent(
+  const bodyText =
 `Dear Hiring Team at ${company},
 
 Please find my application for the ${job} position in ${city}. I have prepared my cover letter and CV and would appreciate the opportunity to discuss my fit for this role.
@@ -1409,13 +1409,72 @@ Kind regards,
 ${CV.name}
 ${CV.phone}
 ${CV.email}`
-  );
+  ;
+  const body = encodeURIComponent(bodyText);
 
-  return `mailto:?subject=${subject}&body=${body}`;
+  return {
+    subject,
+    body,
+    bodyText,
+    mailto: `mailto:?subject=${subject}&body=${body}`
+  };
+}
+
+function extractEmail(rawText) {
+  const match = rawText.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/ig);
+  return match && match.length ? match[0] : '';
+}
+
+function buildGmailComposeUrl(to, subject, body) {
+  const toEncoded = encodeURIComponent(to || '');
+  return `https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=${toEncoded}&su=${subject}&body=${body}`;
+}
+
+function markApplicationSubmitted(company) {
+  const apps = getApps();
+  if (!apps.length) return null;
+
+  const c = String(company || '').toLowerCase().trim();
+  let idx = -1;
+
+  if (c) {
+    for (let i = apps.length - 1; i >= 0; i--) {
+      if (String(apps[i].company || '').toLowerCase().includes(c)) {
+        idx = i;
+        break;
+      }
+    }
+  } else {
+    for (let i = apps.length - 1; i >= 0; i--) {
+      if (apps[i].status === 'prepared' || apps[i].status === 'waiting') {
+        idx = i;
+        break;
+      }
+    }
+  }
+
+  if (idx < 0) return null;
+
+  apps[idx].status = 'applied';
+  const stamp = new Date().toISOString().split('T')[0];
+  const note = (apps[idx].notes || '').trim();
+  apps[idx].notes = `${note ? note + ' | ' : ''}Submitted on ${stamp}`;
+  saveApps(apps);
+  renderTracker();
+  return apps[idx];
 }
 
 function localFallback(text) {
   const t = text.toLowerCase();
+  if (/^(sent|submitted)\b/i.test(t)) {
+    const company = text.replace(/^(sent|submitted)(\s+to)?\s*/i, '').trim();
+    const saved = markApplicationSubmitted(company);
+    if (!saved) {
+      return 'I could not find a matching prepared application. Say: "Apply to IT Specialist at Siemens in Berlin email hr@siemens.com" first.';
+    }
+    return `Great. I marked ${saved.company} (${saved.job}) as Applied in your tracker.`;
+  }
+
   if (/(find|search|look for).*(job|jobs|position|positions)|find me a job|look for a job/i.test(t)) {
     const { role, location } = parseRoleLocation(text);
     const links = runJobHunt(role, location);
@@ -1431,21 +1490,34 @@ I also added a task: Apply to 3 ${role} roles in ${location}.`;
   if (t.includes('apply')) {
     const details = extractApplicationDetails(text);
     if (!details) {
-      return 'I can execute the application workflow, but I need details in this format: "Apply to IT Specialist at Siemens in Berlin".';
+      return 'I can execute the application workflow, but I need details in this format: "Apply to IT Specialist at Siemens in Berlin email hr@siemens.com".';
     }
 
-    const mailto = prepareApplicationPack(details.job, details.company, details.city);
+    const email = extractEmail(text);
+    const draft = prepareApplicationPack(details.job, details.company, details.city);
+    let submitLink = `<a href="${draft.mailto}" target="_blank">Open email draft</a>`;
+
+    if (email) {
+      const gmailUrl = buildGmailComposeUrl(email, draft.subject, draft.body);
+      window.open(gmailUrl, '_blank', 'noopener');
+      submitLink = `<a href="${gmailUrl}" target="_blank">Open Gmail draft to ${email}</a>`;
+    }
+
     addTask(`Submit application to ${details.company} for ${details.job}`);
 
     return `Application workflow executed for ${details.company}.
 
 Done now:
 - Cover letter generated and prefilled.
-- Tracker entry created with status Waiting.
+- Tracker entry created with status Prepared.
 - Task added for final submission.
-- Email draft ready: <a href="${mailto}" target="_blank">Open email draft</a>
+- Submission draft ready: ${submitLink}
 
-Note: full one-click submission to company websites is blocked by login, captcha, and legal consent, but I prepared everything up to the final send/apply step.`;
+Next step:
+- Review the Gmail draft and click Send.
+- Then type: "sent ${details.company}" and I will mark it as Applied.
+
+Note: full auto-send without your final click is blocked by Gmail and website security policies.`;
   }
 
   if (t.startsWith('task:')) {
