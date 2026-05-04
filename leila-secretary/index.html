@@ -1186,8 +1186,10 @@ let micGranted = false;
 let ttsEnabled = JSON.parse(localStorage.getItem('leila_tts_enabled') || 'true');
 let recognitionFinalText = '';
 let leilaTasks = JSON.parse(localStorage.getItem('leila_tasks') || '[]');
+let leilaCvAsset = localStorage.getItem('leila_cv_asset') || '';
 
 const quickPrompts = [
+  { label: '🤖 Autopilot apply (Gmail+jobs)', msg: 'Autopilot apply to IT Specialist at Siemens in Berlin email hr@siemens.com' },
   { label: '🚀 Find jobs and open portals', msg: 'Find jobs for IT Specialist in Berlin and open the job portals now.' },
   { label: '📨 Prepare application package', msg: 'Apply to IT Specialist at Siemens in Berlin.' },
   { label: '✉️ Write a cover letter for a tech job', msg: 'Write me a cover letter in English for an IT Specialist position at a German tech company.' },
@@ -1430,6 +1432,23 @@ function buildGmailComposeUrl(to, subject, body) {
   return `https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=${toEncoded}&su=${subject}&body=${body}`;
 }
 
+function saveCvAsset(textOrUrl) {
+  leilaCvAsset = String(textOrUrl || '').trim();
+  localStorage.setItem('leila_cv_asset', leilaCvAsset);
+}
+
+function openAutopilotJobTabs(job, city, company) {
+  const links = getPortalLinks(job, city, 3);
+  if (links[0]) window.open(links[0].url, '_blank', 'noopener');
+  if (links[1]) window.open(links[1].url, '_blank', 'noopener');
+
+  if (company) {
+    const companyQuery = encodeURIComponent(`${company} ${job}`);
+    const linkedInCompanySearch = `https://www.linkedin.com/jobs/search/?keywords=${companyQuery}&location=${encodeURIComponent(city)}`;
+    window.open(linkedInCompanySearch, '_blank', 'noopener');
+  }
+}
+
 function markApplicationSubmitted(company) {
   const apps = getApps();
   if (!apps.length) return null;
@@ -1466,6 +1485,13 @@ function markApplicationSubmitted(company) {
 
 function localFallback(text) {
   const t = text.toLowerCase();
+  if (t.startsWith('set cv ') || t.startsWith('cv link ') || t.startsWith('cv:')) {
+    const value = text.replace(/^set cv\s+|^cv link\s+|^cv:\s*/i, '').trim();
+    if (!value) return 'Send: "set cv https://..." with your CV file URL (Google Drive/Dropbox/public link).';
+    saveCvAsset(value);
+    return `Saved. I will include this CV asset in applications: ${esc(value)}`;
+  }
+
   if (/^(sent|submitted)\b/i.test(t)) {
     const company = text.replace(/^(sent|submitted)(\s+to)?\s*/i, '').trim();
     const saved = markApplicationSubmitted(company);
@@ -1493,14 +1519,23 @@ I also added a task: Apply to 3 ${role} roles in ${location}.`;
       return 'I can execute the application workflow, but I need details in this format: "Apply to IT Specialist at Siemens in Berlin email hr@siemens.com".';
     }
 
+    const isAutopilot = t.includes('autopilot') || t.includes('auto apply') || t.includes('apply now');
     const email = extractEmail(text);
     const draft = prepareApplicationPack(details.job, details.company, details.city);
+    const cvLine = leilaCvAsset
+      ? `\nCV attachment/link: ${leilaCvAsset}`
+      : `\nCV profile: ${CV.website} (Use this profile if file attachment is not available).`;
+    const richerBody = encodeURIComponent(`${decodeURIComponent(draft.body)}${cvLine}\nLinkedIn: ${CV.linkedin}`);
+
     let submitLink = `<a href="${draft.mailto}" target="_blank">Open email draft</a>`;
 
     if (email) {
-      const gmailUrl = buildGmailComposeUrl(email, draft.subject, draft.body);
+      const gmailUrl = buildGmailComposeUrl(email, draft.subject, richerBody);
       window.open(gmailUrl, '_blank', 'noopener');
       submitLink = `<a href="${gmailUrl}" target="_blank">Open Gmail draft to ${email}</a>`;
+      if (isAutopilot) {
+        openAutopilotJobTabs(details.job, details.city, details.company);
+      }
     }
 
     addTask(`Submit application to ${details.company} for ${details.job}`);
@@ -1512,6 +1547,10 @@ Done now:
 - Tracker entry created with status Prepared.
 - Task added for final submission.
 - Submission draft ready: ${submitLink}
+
+Autopilot actions:
+- ${isAutopilot ? 'Opened Gmail draft and job tabs (Indeed + LinkedIn) for immediate submission.' : 'Type "autopilot apply ..." to also open job tabs automatically.'}
+- ${leilaCvAsset ? `Using saved CV asset: ${esc(leilaCvAsset)}` : 'No CV file link saved yet. Use command: set cv https://your-cv-link'}
 
 Next step:
 - Review the Gmail draft and click Send.
