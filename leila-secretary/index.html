@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leila – Your Virtual Secretary</title>
+  <style>
+    /* ── RESET & BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #0f1117;
+      --surface:  #1a1d27;
+      --card:     #22263a;
+      --border:   #2e3350;
+      --accent:   #7c6aff;
+      --accent2:  #c96fff;
+      --gold:     #f5c842;
+      --text:     #e8eaf6;
+      --muted:    #8890b5;
+      --danger:   #ff5c7c;
+      --success:  #4ade80;
+      --warn:     #facc15;
+      --radius:   12px;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px 28px;
+      background: linear-gradient(135deg, #1a1d27 0%, #12152a 100%);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .leila-avatar {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+      box-shadow: 0 0 16px rgba(124,106,255,.45);
+    }
+    header h1 { font-size: 1.45rem; font-weight: 700; }
+    header h1 span { color: var(--accent); }
+    header p { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+    .header-right { margin-left: auto; font-size: .8rem; color: var(--muted); text-align: right; }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--success); margin-right: 5px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* ── NAV ── */
+    nav {
+      display: flex; gap: 4px; padding: 12px 20px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      overflow-x: auto; flex-shrink: 0;
+    }
+    nav button {
+      background: none; border: 1px solid transparent;
+      color: var(--muted); padding: 8px 16px;
+      border-radius: 8px; cursor: pointer; font-size: .88rem;
+      white-space: nowrap; transition: all .2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    nav button:hover { border-color: var(--border); color: var(--text); }
+    nav button.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; border-color: transparent;
+      box-shadow: 0 4px 14px rgba(124,106,255,.35);
+    }
+
+    /* ── MAIN ── */
+    main { flex: 1; padding: 28px 24px; max-width: 960px; margin: 0 auto; width: 100%; }
+    .tab { display: none; animation: fadeIn .3s ease; }
+    .tab.active { display: block; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px; margin-bottom: 20px;
+    }
+    .card h2 { font-size: 1.1rem; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .card h3 { font-size: .95rem; color: var(--muted); margin-bottom: 10px; }
+
+    /* ── FORM ELEMENTS ── */
+    label { display: block; font-size: .82rem; color: var(--muted); margin-bottom: 5px; margin-top: 14px; }
+    input, textarea, select {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 14px; border-radius: 8px;
+      font-size: .9rem; font-family: inherit; transition: border-color .2s;
+    }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 20px; border-radius: 8px; border: none;
+      cursor: pointer; font-size: .9rem; font-weight: 600;
+      transition: all .2s; margin-top: 14px;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+    .btn-primary:hover { opacity: .88; box-shadow: 0 4px 14px rgba(124,106,255,.4); }
+    .btn-gold { background: linear-gradient(135deg, #f5c842, #e8a800); color: #000; }
+    .btn-gold:hover { opacity: .88; }
+    .btn-danger { background: var(--danger); color: #fff; padding: 6px 14px; font-size: .8rem; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 6px 12px; font-size: .8rem; margin-top: 0; }
+
+    /* ── COPY BOX ── */
+    .copy-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 18px;
+      font-size: .88rem; line-height: 1.8; white-space: pre-wrap;
+      max-height: 420px; overflow-y: auto; margin-top: 14px;
+    }
+    .copy-row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+
+    /* ── DASHBOARD ── */
+    .greeting-box {
+      background: linear-gradient(135deg, #1e2140, #2a1a4a);
+      border: 1px solid #3d3068;
+      border-radius: var(--radius); padding: 28px 24px; margin-bottom: 24px;
+      display: flex; gap: 20px; align-items: flex-start;
+    }
+    .greeting-avatar {
+      width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; box-shadow: 0 0 24px rgba(124,106,255,.5);
+    }
+    .greeting-text h2 { font-size: 1.3rem; margin-bottom: 8px; }
+    .greeting-text p { color: var(--muted); line-height: 1.6; font-size: .9rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px; text-align: center;
+    }
+    .stat-card .num { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .stat-card .lbl { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+    .tip-list { list-style: none; }
+    .tip-list li {
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      font-size: .88rem; color: var(--muted); display: flex; gap: 10px;
+    }
+    .tip-list li:last-child { border: none; }
+    .tip-list li span.icon { font-size: 1rem; flex-shrink: 0; }
+
+    /* ── TRACKER TABLE ── */
+    .tracker-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .tracker-table th {
+      text-align: left; padding: 10px 12px;
+      background: var(--surface); color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .tracker-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .tracker-table tr:last-child td { border: none; }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: .75rem; font-weight: 600;
+    }
+    .badge-applied   { background: #1e3a5f; color: #60aaff; }
+    .badge-interview { background: #2d3a10; color: var(--success); }
+    .badge-waiting   { background: #3a2d10; color: var(--warn); }
+    .badge-rejected  { background: #3a1010; color: var(--danger); }
+    .badge-offer     { background: #0d3320; color: #34d399; }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty-state .icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+    /* ── JOB SEARCH ── */
+    .job-portal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 16px;
+      text-decoration: none; color: var(--text); transition: all .2s;
+    }
+    .job-portal:hover { border-color: var(--accent); transform: translateX(4px); }
+    .portal-icon { width: 42px; height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .portal-info h4 { font-size: .95rem; margin-bottom: 3px; }
+    .portal-info p { font-size: .8rem; color: var(--muted); }
+    .portal-arrow { margin-left: auto; color: var(--muted); font-size: 1.2rem; }
+    .search-bar-row { display: flex; gap: 10px; margin-bottom: 20px; }
+    .search-bar-row input { flex: 1; }
+    .search-bar-row button { margin-top: 0; }
+
+    /* ── INTERVIEW ── */
+    .qa-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; margin-bottom: 14px; overflow: hidden;
+    }
+    .qa-question {
+      padding: 14px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      font-weight: 600; font-size: .9rem; user-select: none;
+    }
+    .qa-question:hover { background: rgba(124,106,255,.08); }
+    .qa-answer {
+      padding: 0 18px; max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .35s ease;
+      font-size: .88rem; color: var(--muted); line-height: 1.7;
+    }
+    .qa-answer.open { max-height: 400px; padding: 14px 18px; border-top: 1px solid var(--border); }
+    .qa-arrow { transition: transform .3s; font-size: .8rem; }
+    .qa-arrow.open { transform: rotate(180deg); }
+    .category-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 20px;
+      font-size: .7rem; margin-right: 8px;
+      background: rgba(124,106,255,.2); color: var(--accent);
+    }
+
+    /* ── CV ADAPT ── */
+    .cv-section { margin-bottom: 22px; }
+    .cv-section h3 { font-size: 1rem; margin-bottom: 10px; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+    .cv-original { background: #1a1010; border: 1px solid #3a1010; border-radius: 8px; padding: 14px; font-size: .85rem; color: #ffaaaa; margin-bottom: 8px; }
+    .cv-improved { background: #0d2010; border: 1px solid #1a4020; border-radius: 8px; padding: 14px; font-size: .85rem; color: #a0f0b0; }
+    .arrow-label { font-size: .8rem; color: var(--muted); margin: 6px 0; }
+    .progress-bar { background: var(--border); border-radius: 20px; height: 8px; margin-top: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 20px; transition: width 1s ease; }
+
+    /* ── CHAT ── */
+    .chat-wrap {
+      display: flex; flex-direction: column; height: 72vh; min-height: 420px;
+    }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 14px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .msg { display: flex; gap: 10px; align-items: flex-start; max-width: 88%; }
+    .msg.user { flex-direction: row-reverse; align-self: flex-end; }
+    .msg-avatar {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .msg.leila .msg-avatar { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+    .msg.user  .msg-avatar { background: #2a2040; border: 1px solid var(--border); }
+    .msg-bubble {
+      padding: 11px 15px; border-radius: 16px; font-size: .88rem; line-height: 1.7;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .msg.leila .msg-bubble { background: var(--card); border: 1px solid var(--border); border-top-left-radius: 4px; }
+    .msg.user  .msg-bubble { background: linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-top-right-radius: 4px; }
+    .msg-time { font-size: .7rem; color: var(--muted); margin-top: 4px; }
+    .chat-input-row {
+      display: flex; gap: 8px; align-items: flex-end;
+    }
+    .chat-input-row textarea {
+      flex: 1; min-height: 46px; max-height: 130px; resize: none;
+      border-radius: 12px; padding: 12px 14px; font-size: .9rem;
+    }
+    .voice-btn {
+      width: 46px; height: 46px; border-radius: 50%; border: none;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); font-size: 1.2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s; flex-shrink: 0;
+    }
+    .voice-btn:hover { border-color: var(--accent); }
+    .voice-btn.listening {
+      background: var(--danger); border-color: var(--danger);
+      animation: pulse 1s infinite;
+    }
+    .send-btn {
+      width: 46px; height: 46px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-size: 1.1rem; cursor: pointer; flex-shrink: 0;
+      transition: all .2s;
+    }
+    .send-btn:hover { opacity: .85; }
+    .send-btn:disabled { opacity: .4; cursor: default; }
+    .typing-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--muted); margin:0 2px; animation: tdot 1.2s infinite; }
+    .typing-dot:nth-child(2){ animation-delay:.2s }
+    .typing-dot:nth-child(3){ animation-delay:.4s }
+    @keyframes tdot { 0%,80%,100%{transform:scale(.6)} 40%{transform:scale(1)} }
+    .assistant-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      background: var(--surface); border:1px solid var(--border);
+      border-radius:8px; padding:5px 12px; font-size:.78rem; color:var(--muted); margin-left:auto;
+      transition:all .2s;
+    }
+    .assistant-badge.active { border-color:#34d399; color:#34d399; }
+    .quick-btns { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; }
+    .quick-btn {
+      background:var(--surface); border:1px solid var(--border); border-radius:20px;
+      padding:6px 14px; font-size:.78rem; color:var(--muted); cursor:pointer; transition:all .2s;
+    }
+    .quick-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .task-list { margin-top: 14px; }
+    .task-item {
+      display: flex; gap: 10px; align-items: center; padding: 8px 10px;
+      border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; background: var(--surface);
+    }
+    .task-item.done .task-text { text-decoration: line-through; color: var(--muted); }
+    .task-text { flex: 1; font-size: .85rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 16px; font-size: .78rem; color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      header { flex-wrap: wrap; }
+      .header-right { width: 100%; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<header>
+  <div class="leila-avatar">🤵‍♀️</div>
+  <div>
+    <h1><span>Leila</span> – Virtual Secretary</h1>
+    <p>Your personal job-search assistant for Germany</p>
+  </div>
+  <div class="header-right">
+    <span class="status-dot"></span>Online &nbsp;|&nbsp;
+    Rudwan Barouni &nbsp;|&nbsp; May 2026
+  </div>
+</header>
+
+<!-- ══════════ NAV ══════════ -->
+<nav>
+  <button class="active" onclick="switchTab('dashboard')">🏠 Dashboard</button>
+  <button onclick="switchTab('chat')">💬 Ask Leila</button>
+  <button onclick="switchTab('cover')">✉️ Cover Letter</button>
+  <button onclick="switchTab('tracker')">📋 Job Tracker</button>
+  <button onclick="switchTab('cv')">🇩🇪 CV für Deutschland</button>
+  <button onclick="switchTab('jobs')">🔍 Job Search</button>
+  <button onclick="switchTab('interview')">🎤 Interview Prep</button>
+</nav>
+
+<!-- ══════════ MAIN ══════════ -->
+<main>
+
+  <!-- ── DASHBOARD ── -->
+  <div id="tab-dashboard" class="tab active">
+    <div class="greeting-box">
+      <div class="greeting-avatar">🤵‍♀️</div>
+      <div class="greeting-text">
+        <h2>Guten Morgen, Rudwan! 👋</h2>
+        <p>
+          I'm <strong>Leila</strong>, your virtual secretary. I'm here to help you land a great job in Germany.
+          Your CV is loaded. Use the tabs above to write tailored cover letters, track your applications,
+          adapt your CV for the German market, find job portals, and practice for interviews.
+          <br /><br />
+          <strong>Tipp:</strong> Start by generating a cover letter for a specific position, then add it to your tracker!
+        </p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="stat-card">
+        <div class="num" id="stat-total">0</div>
+        <div class="lbl">Applications tracked</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="stat-interview" style="color:var(--success)">0</div>
+        <div class="lbl">Interviews secured</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📌 Your Profile at a Glance</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:.88rem;">
+        <div><span style="color:var(--muted)">Name:</span> Rudwan Barouni</div>
+        <div><span style="color:var(--muted)">Email:</span> Rudwan.barouni@gmail.com</div>
+        <div><span style="color:var(--muted)">Phone:</span> +387-61657883</div>
+        <div><span style="color:var(--muted)">LinkedIn:</span> linkedin.com/in/rudwan-barouni-10b6a2a8</div>
+        <div><span style="color:var(--muted)">Website:</span> reyobaron.github.io</div>
+        <div><span style="color:var(--muted)">Languages:</span> English, Arabic</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💡 Leila's Top Tips for Germany</h2>
+      <ul class="tip-list">
+        <li><span class="icon">🇩🇪</span> German employers value precision — always tailor each cover letter (Anschreiben) to the specific job.</li>
+        <li><span class="icon">📄</span> A German CV (Lebenslauf) should include a professional photo, date of birth, and a clear chronological layout.</li>
+        <li><span class="icon">🤝</span> The XING platform is Germany's LinkedIn — create a profile at xing.com.</li>
+        <li><span class="icon">🗣️</span> Even basic German (A2–B1) significantly improves your chances. Consider a Goethe-Institut course.</li>
+        <li><span class="icon">✅</span> Register your qualifications with the German ANABIN database if required for your field.</li>
+        <li><span class="icon">📬</span> Always follow up applications after 1–2 weeks with a polite email.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── COVER LETTER ── -->
+  <div id="tab-cover" class="tab">
+    <div class="card">
+      <h2>✉️ Cover Letter Generator (Anschreiben)</h2>
+      <h3>Fill in the job details — Leila writes the letter.</h3>
+
+      <label>Company Name (Firmenname)</label>
+      <input type="text" id="cl-company" placeholder="e.g. Siemens AG" />
+
+      <label>Job Title (Stellenbezeichnung)</label>
+      <input type="text" id="cl-jobtitle" placeholder="e.g. IT Specialist / CAD Designer" />
+
+      <label>City (Ort)</label>
+      <input type="text" id="cl-city" placeholder="e.g. München" />
+
+      <label>Key Requirements from Job Ad (optional — helps personalise)</label>
+      <textarea id="cl-keywords" placeholder="e.g. AutoCAD, project management, English communication, BIM..."></textarea>
+
+      <label>Language</label>
+      <select id="cl-lang">
+        <option value="en">English</option>
+        <option value="de">German (Deutsch)</option>
+      </select>
+
+      <div>
+        <button class="btn btn-primary" onclick="generateCoverLetter()">⚡ Generate Cover Letter</button>
+        <button class="btn btn-ghost" onclick="clearCoverLetter()">🗑 Clear</button>
+      </div>
+    </div>
+
+    <div id="cl-output" style="display:none">
+      <div class="card">
+        <h2>📄 Generated Cover Letter</h2>
+        <div class="copy-box" id="cl-text"></div>
+        <div class="copy-row">
+          <button class="btn btn-gold btn-sm" onclick="copyLetter()">📋 Copy to Clipboard</button>
+          <button class="btn btn-primary btn-sm" onclick="addToTracker()">➕ Add to Job Tracker</button>
+        </div>
+        <p id="cl-copy-msg" style="font-size:.8rem;color:var(--success);margin-top:8px;display:none">✔ Copied!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TRACKER ── -->
+  <div id="tab-tracker" class="tab">
+    <div class="card">
+      <h2>➕ Add New Application</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label>Company</label>
+          <input type="text" id="tr-company" placeholder="Company name" />
+        </div>
+        <div>
+          <label>Job Title</label>
+          <input type="text" id="tr-job" placeholder="Position" />
+        </div>
+        <div>
+          <label>City</label>
+          <input type="text" id="tr-city" placeholder="City, Germany" />
+        </div>
+        <div>
+          <label>Date Applied</label>
+          <input type="date" id="tr-date" />
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="tr-status">
+            <option value="applied">Applied</option>
+            <option value="waiting">Waiting</option>
+            <option value="interview">Interview</option>
+            <option value="offer">Offer</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div>
+          <label>Notes</label>
+          <input type="text" id="tr-notes" placeholder="Any notes..." />
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addApplication()">➕ Add Application</button>
+    </div>
+
+    <div class="card">
+      <h2>📋 Applications</h2>
+      <div id="tracker-body"></div>
+    </div>
+  </div>
+
+  <!-- ── CV für DEUTSCHLAND ── -->
+  <div id="tab-cv" class="tab">
+    <div class="card">
+      <h2>🇩🇪 CV Readiness Score</h2>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">How well your current CV matches German employer expectations.</p>
+      <div id="cv-scores"></div>
+    </div>
+
+    <div class="card">
+      <h2>🔧 Suggested Improvements</h2>
+
+      <div class="cv-section">
+        <h3>📝 Profile Summary</h3>
+        <div class="cv-original">❌ Current: "I am a highly proficient Architect Engineering / IT Specialist AI / ecommerce with over five years of experience..."</div>
+        <div class="arrow-label">→ Leila suggests:</div>
+        <div class="cv-improved">✅ Improved: "Multidisciplinary professional with expertise in IT systems, architectural design (AutoCAD, 3D modelling) and digital marketing. Experienced in leading projects independently, managing client relationships and delivering results in international environments. Fluent in English and Arabic."</div>
+      </div>
+
+      <div class="cv-section">
+        <h3>🛠 Skills Section</h3>
+        <div class="cv-original">❌ Current: Listed as a flat unstructured list — "Social media adds, Photography, 3d design..."</div>
+        <div class="arrow-label">→ Leila suggests grouping by category:</div>
+        <div class="cv-improved">✅ Improved:<br/>
+<strong>IT & Software:</strong> VS Code, GitHub Copilot, AI tools, web development<br/>
+<strong>Design & Engineering:</strong> Autodesk AutoCAD, 3D modelling, architectural drawing<br/>
+<strong>Digital Marketing:</strong> Social media advertising, graphic design, video editing<br/>
+<strong>Management:</strong> Project management, client relations, operations management</div>
+      </div>
+
+      <div class="cv-section">
+        <h3>📅 Work Experience</h3>
+        <div class="cv-original">❌ Current: Descriptions are narrative/informal. Dates incomplete (no end dates).</div>
+        <div class="arrow-label">→ Leila suggests bullet-point achievements with dates:</div>
+        <div class="cv-improved">✅ Example rewrite for Aloria alafdel (2015–2018):<br/>
+• Founded and operated architectural &amp; real estate services firm<br/>
+• Managed renovation projects for international clients including the Philippine Embassy<br/>
+• Coordinated contracts with oil companies and NGOs; built network of 20+ B2B contacts<br/>
+• Oversaw full project lifecycle from client brief to final delivery</div>
+      </div>
+
+      <div class="cv-section">
+        <h3>🌍 German Market Checklist</h3>
+        <div id="de-checklist"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📄 Download-Ready German CV Template</h2>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">Click to copy a formatted plain-text Lebenslauf you can paste into Word/LibreOffice.</p>
+      <button class="btn btn-gold" onclick="copyGermanCV()">📋 Copy German CV (Lebenslauf)</button>
+      <p id="cv-copy-msg" style="font-size:.8rem;color:var(--success);margin-top:8px;display:none">✔ Copied to clipboard!</p>
+    </div>
+  </div>
+
+  <!-- ── JOB SEARCH ── -->
+  <div id="tab-jobs" class="tab">
+    <div class="card">
+      <h2>🔍 Search German Job Portals</h2>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Pre-filled with Rudwan's skills. Click "Search" to open the portal with your query.</p>
+
+      <div class="search-bar-row">
+        <input type="text" id="job-keyword" value="IT Specialist AutoCAD" placeholder="Job keyword" />
+        <input type="text" id="job-location" value="Deutschland" placeholder="Location" style="max-width:180px" />
+      </div>
+    </div>
+
+    <div id="portal-list"></div>
+
+    <div class="card" style="margin-top:8px">
+      <h2>🎯 Recommended Job Titles for Rudwan</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px" id="role-tags"></div>
+    </div>
+
+    <div class="card">
+      <h2>📌 Important German Job-Search Resources</h2>
+      <ul class="tip-list">
+        <li><span class="icon">🏛</span> <strong>Bundesagentur für Arbeit</strong> — Germany's official employment agency. Register at arbeitsagentur.de for official job listings and support.</li>
+        <li><span class="icon">🌐</span> <strong>Make it in Germany</strong> — Official portal for skilled workers immigrating to Germany: make-it-in-germany.com</li>
+        <li><span class="icon">📋</span> <strong>Anerkennung qualifications</strong> — Have your architecture degree recognised: anerkennung-in-deutschland.de</li>
+        <li><span class="icon">🗣</span> <strong>German language</strong> — Goethe-Institut online courses, free: goethe.de</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── ASK LEILA (AI CHAT) ── -->
+  <div id="tab-chat" class="tab">
+    <div class="card" style="padding-bottom:0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <h2 style="margin:0">💬 Ask Leila</h2>
+        <span class="assistant-badge active">● Leila AI Active</span>
+        <button class="btn btn-ghost btn-sm" id="tts-toggle-btn" onclick="toggleTTS()" style="margin:0;margin-left:auto">🔊 Voice On</button>
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px">
+        Leila knows your full CV and is here to help with your Germany job search.
+        Type or <strong>speak</strong> any command or question.
+      </p>
+
+      <div class="quick-btns" id="quick-btns"></div>
+      <div class="task-list" id="task-list"></div>
+
+      <div class="chat-wrap">
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-row">
+          <textarea id="chat-input" placeholder="Type your message… or press 🎤 to speak" rows="1"
+            onkeydown="chatKeydown(event)" oninput="autoResize(this)"></textarea>
+          <button class="btn btn-ghost btn-sm" id="task-btn" onclick="addTaskFromInput()" title="Add current text as task" style="height:46px;margin-top:0">Task</button>
+          <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" title="Hold to speak">🎤</button>
+          <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:6px 2px 0 2px;flex-wrap:wrap">
+          <div id="mic-status" style="font-size:.78rem;color:var(--muted)">Microphone not connected yet.</div>
+          <button class="btn btn-ghost btn-sm" id="mic-help-btn" onclick="showMicPermissionHelp()" style="margin:0;padding:4px 10px;font-size:.72rem">Fix mic</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── INTERVIEW PREP ── -->
+  <div id="tab-interview" class="tab">
+    <div class="card">
+      <h2>🎤 Interview Practice with Leila</h2>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Click any question to reveal Leila's suggested answer based on your background. Practice speaking each one aloud.</p>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px" id="qa-filters"></div>
+      <div id="qa-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>📝 Practice Tracker</h2>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">Mark questions as practiced to track your progress.</p>
+      <div style="display:flex;gap:14px;align-items:center">
+        <div class="progress-bar" style="flex:1"><div class="progress-fill" id="practice-fill" style="width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+        <span id="practice-count" style="font-size:.85rem;color:var(--muted)">0 / 0 practiced</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="resetPractice()">🔄 Reset Progress</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>Leila – Built for Rudwan Barouni &nbsp;•&nbsp; Virtual Job Secretary &nbsp;•&nbsp; Germany Job Search 2026</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  CANDIDATE DATA
+// ══════════════════════════════════════════════════════════
+const CV = {
+  name: "Rudwan Barouni",
+  email: "Rudwan.barouni@gmail.com",
+  phone: "+387-61657883",
+  linkedin: "linkedin.com/in/rudwan-barouni-10b6a2a8",
+  website: "reyobaron.github.io",
+  address: "Bosnia and Herzegovina",
+  languages: "English (fluent), Arabic (native)",
+  skills: "IT systems, VS Code, GitHub Copilot, AI tools, web development, Autodesk AutoCAD, 3D modelling & design, architectural drawing, graphic design, social media advertising, video editing, photography, project management, operations management",
+  experience: [
+    { company: "Etraan North Africa Food Company", role: "Online Marketing Specialist", years: "2018", city: "Tripoli, Libya" },
+    { company: "Aloria Alafdel for Architecture & Real Estate", role: "Owner & Operations Manager", years: "2015–2018", city: "Tripoli, Libya" },
+    { company: "Albahr Almotawaset Office", role: "Architect", years: "2012–2013", city: "Tripoli, Libya" }
+  ],
+  education: [
+    { degree: "Bachelor of Architecture", institution: "Alfaiha University", year: "2004–2007", place: "Tripoli, Libya" },
+    { degree: "IELTS Academic (Score 5.5)", institution: "British Study Centre", year: "2014–2015", place: "Oxford, UK" },
+    { degree: "PPL(A) Ground School (16.5 flying hours)", institution: "Airways Aviation", year: "2018", place: "Huesca, Spain" }
+  ]
+};
+
+// ══════════════════════════════════════════════════════════
+//  TAB NAVIGATION
+// ══════════════════════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const btn = document.querySelector(`nav button[onclick*="'${id}'"]`);
+  if (btn) btn.classList.add('active');
+  if (id === 'tracker') renderTracker();
+  if (id === 'dashboard') updateStats();
+  if (id === 'cv') renderCVScores();
+  if (id === 'jobs') renderPortals();
+  if (id === 'interview') renderInterview();
+}
+
+// ══════════════════════════════════════════════════════════
+//  COVER LETTER
+// ══════════════════════════════════════════════════════════
+let lastLetter = { company: '', job: '' };
+
+function generateCoverLetter() {
+  const company  = document.getElementById('cl-company').value.trim() || '[Company Name]';
+  const jobtitle = document.getElementById('cl-jobtitle').value.trim() || '[Job Title]';
+  const city     = document.getElementById('cl-city').value.trim() || '[City]';
+  const keywords = document.getElementById('cl-keywords').value.trim();
+  const lang     = document.getElementById('cl-lang').value;
+  lastLetter = { company, job: jobtitle };
+
+  const today = new Date().toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-GB', { day:'2-digit', month:'long', year:'numeric' });
+
+  let keySkills = '';
+  if (keywords) {
+    keySkills = lang === 'de'
+      ? `\nAnhand Ihrer Stellenausschreibung erkenne ich, dass Sie folgende Kompetenzen suchen: ${keywords}. Genau diese bringe ich mit.`
+      : `\nReviewing your job advertisement, I note you are seeking: ${keywords}. I am confident my background aligns closely with these requirements.`;
+  }
+
+  let letter = '';
+  if (lang === 'en') {
+    letter = `${CV.name}
+${CV.address}
+${CV.phone} | ${CV.email}
+${CV.website}
+
+${today}
+
+Hiring Manager
+${company}
+${city}
+
+Re: Application for the position of ${jobtitle}
+
+Dear Hiring Manager,
+
+I am writing to express my strong interest in the ${jobtitle} position at ${company}. With a Bachelor's degree in Architecture, hands-on IT experience, and a proven track record in project management and digital operations, I am confident in my ability to contribute meaningfully to your team.${keySkills}
+
+Over the past decade I have built a versatile career spanning architectural design (Autodesk AutoCAD, 3D modelling), IT systems (VS Code, GitHub Copilot, AI-assisted workflows), digital marketing, and business operations. As the founder and operations manager of my own architectural and real estate firm, I successfully managed contracts for international clients including diplomatic missions and multinational organisations — developing strong communication, organisational, and problem-solving skills.
+
+I am a self-driven professional who adapts quickly to new environments. Having studied in the UK (IELTS 5.5) and trained in Spain, I am experienced working in international, multicultural settings. I am currently based in Bosnia and Herzegovina and am available to relocate to Germany.
+
+I would welcome the opportunity to discuss how my background can benefit ${company}. I am available for an interview at your convenience and can provide further work samples, references, or portfolio materials upon request.
+
+Thank you for your time and consideration.
+
+Yours sincerely,
+
+${CV.name}
+${CV.phone} | ${CV.email}
+${CV.linkedin}`;
+  } else {
+    letter = `${CV.name}
+${CV.address}
+${CV.phone} | ${CV.email}
+${CV.website}
+
+${today}
+
+Personalmanagement
+${company}
+${city}
+
+Bewerbung als ${jobtitle}
+
+Sehr geehrte Damen und Herren,
+
+mit großem Interesse habe ich Ihre Stellenausschreibung für die Position als ${jobtitle} bei ${company} gelesen. Als erfahrener IT-Spezialist und Architekturingenieur mit mehr als zehn Jahren internationaler Berufserfahrung möchte ich meine Kenntnisse und Fähigkeiten in Ihr Unternehmen einbringen.${keySkills}
+
+Meine berufliche Laufbahn umfasst architektonische Planung und Konstruktion (Autodesk AutoCAD, 3D-Modellierung), IT-Systeme (VS Code, GitHub Copilot, KI-gestützte Workflows), digitales Marketing sowie Unternehmensführung. Als Gründer und Betriebsleiter meines eigenen Architektur- und Immobilienunternehmens habe ich erfolgreich Projekte für internationale Kunden – darunter diplomatische Vertretungen und multinationale Organisationen – geleitet und dabei ausgeprägte Kommunikations- und Organisationsfähigkeiten entwickelt.
+
+Ich bin eine ergebnisorientierte, eigenverantwortlich handelnde Fachkraft mit nachgewiesener Anpassungsfähigkeit in internationalen Arbeitsumgebungen. Mein Studium in Großbritannien sowie meine Ausbildung in Spanien haben mein interkulturelles Verständnis gefestigt. Ich lebe derzeit in Bosnien und Herzegowina und bin bereit, nach Deutschland umzuziehen.
+
+Ich freue mich auf ein persönliches Gespräch, bei dem ich Ihnen meine Qualifikationen und Motivation ausführlicher vorstellen kann. Portfolio-Arbeiten und Referenzen stelle ich Ihnen gerne auf Anfrage zur Verfügung.
+
+Mit freundlichen Grüßen,
+
+${CV.name}
+${CV.phone} | ${CV.email}
+${CV.linkedin}`;
+  }
+
+  document.getElementById('cl-text').textContent = letter;
+  document.getElementById('cl-output').style.display = 'block';
+  document.getElementById('cl-output').scrollIntoView({ behavior: 'smooth' });
+}
+
+function clearCoverLetter() {
+  ['cl-company','cl-jobtitle','cl-city','cl-keywords'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cl-output').style.display = 'none';
+}
+
+function copyLetter() {
+  const text = document.getElementById('cl-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const msg = document.getElementById('cl-copy-msg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 2500);
+  });
+}
+
+function addToTracker() {
+  if (!lastLetter.company || lastLetter.company === '[Company Name]') {
+    alert('Please fill in a company name first.');
+    return;
+  }
+  const apps = getApps();
+  apps.push({
+    id: Date.now(),
+    company: lastLetter.company,
+    job: lastLetter.job,
+    city: document.getElementById('cl-city').value || '',
+    date: new Date().toISOString().split('T')[0],
+    status: 'applied',
+    notes: 'Cover letter generated by Leila'
+  });
+  saveApps(apps);
+  alert('✅ Added to Job Tracker!');
+}
+
+// ══════════════════════════════════════════════════════════
+//  JOB TRACKER
+// ══════════════════════════════════════════════════════════
+function getApps() {
+  try { return JSON.parse(localStorage.getItem('leila_apps') || '[]'); } catch { return []; }
+}
+function saveApps(apps) { localStorage.setItem('leila_apps', JSON.stringify(apps)); }
+
+function addApplication() {
+  const company = document.getElementById('tr-company').value.trim();
+  const job     = document.getElementById('tr-job').value.trim();
+  if (!company || !job) { alert('Please enter at least a company and job title.'); return; }
+  const apps = getApps();
+  apps.push({
+    id: Date.now(),
+    company,
+    job,
+    city:   document.getElementById('tr-city').value.trim(),
+    date:   document.getElementById('tr-date').value || new Date().toISOString().split('T')[0],
+    status: document.getElementById('tr-status').value,
+    notes:  document.getElementById('tr-notes').value.trim()
+  });
+  saveApps(apps);
+  ['tr-company','tr-job','tr-city','tr-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('tr-status').value = 'applied';
+  renderTracker();
+}
+
+function deleteApp(id) {
+  if (!confirm('Delete this application?')) return;
+  saveApps(getApps().filter(a => a.id !== id));
+  renderTracker();
+}
+
+function updateStatus(id, val) {
+  const apps = getApps().map(a => a.id === id ? { ...a, status: val } : a);
+  saveApps(apps);
+  updateStats();
+}
+
+function renderTracker() {
+  const apps = getApps();
+  updateStats();
+  const body = document.getElementById('tracker-body');
+  if (!apps.length) {
+    body.innerHTML = `<div class="empty-state"><span class="icon">📭</span>No applications yet. Add one above or generate a cover letter!</div>`;
+    return;
+  }
+  const statusMap = { applied: 'badge-applied', waiting: 'badge-waiting', interview: 'badge-interview', offer: 'badge-offer', rejected: 'badge-rejected' };
+  const statusLabel = { applied:'Applied', waiting:'Waiting', interview:'Interview', offer:'Offer!', rejected:'Rejected' };
+  body.innerHTML = `
+    <table class="tracker-table">
+      <thead><tr>
+        <th>Company</th><th>Position</th><th>City</th><th>Date</th><th>Status</th><th>Notes</th><th></th>
+      </tr></thead>
+      <tbody>${apps.map(a => `
+        <tr>
+          <td><strong>${esc(a.company)}</strong></td>
+          <td>${esc(a.job)}</td>
+          <td>${esc(a.city||'')}</td>
+          <td>${esc(a.date||'')}</td>
+          <td>
+            <select onchange="updateStatus(${a.id},this.value)" style="padding:4px 8px;font-size:.78rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+              ${['applied','waiting','interview','offer','rejected'].map(s =>
+                `<option value="${s}"${a.status===s?' selected':''}>${statusLabel[s]}</option>`).join('')}
+            </select>
+          </td>
+          <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.notes||'')}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteApp(${a.id})">✕</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function updateStats() {
+  const apps = getApps();
+  document.getElementById('stat-total').textContent = apps.length;
+  document.getElementById('stat-interview').textContent = apps.filter(a => a.status === 'interview' || a.status === 'offer').length;
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ══════════════════════════════════════════════════════════
+//  CV für DEUTSCHLAND
+// ══════════════════════════════════════════════════════════
+const cvScores = [
+  { label: 'Professional Photo',       score: 100, tip: 'Required in German CVs — ✅ you have one.' },
+  { label: 'Contact Details',          score: 100, tip: 'Phone, email, LinkedIn — ✅ all present.' },
+  { label: 'Clear Chronological Order',score: 70,  tip: '⚠️ Missing end dates on some roles. Add exact dates.' },
+  { label: 'German Language Skills',   score: 20,  tip: '❌ No German listed. Even A1/A2 should be added. Consider a course.' },
+  { label: 'Quantified Achievements',  score: 30,  tip: '⚠️ Add measurable results (e.g. "managed 5 renovation projects worth €50k").' },
+  { label: 'Grouped Skills Section',   score: 40,  tip: '⚠️ Skills are listed as a flat list. Group by category for German market.' },
+  { label: 'References Available',     score: 50,  tip: '⚠️ Add "References available on request" (Referenzen auf Anfrage).' },
+  { label: 'Tailored for Role',        score: 55,  tip: '⚠️ CV is generic. Each application should have a slightly tailored version.' },
+];
+
+function renderCVScores() {
+  document.getElementById('cv-scores').innerHTML = cvScores.map(s => `
+    <div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px">
+        <span>${s.label}</span>
+        <span style="color:${s.score>=80?'var(--success)':s.score>=50?'var(--warn)':'var(--danger)'}">${s.score}%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${s.score}%;background:${s.score>=80?'var(--success)':s.score>=50?'var(--warn)':'var(--danger)'}"></div>
+      </div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">${s.tip}</div>
+    </div>`).join('');
+
+  const checklist = [
+    [true,  'Photo included (Bewerbungsfoto)'],
+    [true,  'Full name & contact details'],
+    [false, 'Date of birth (Geburtsdatum) — standard in Germany'],
+    [false, 'Nationality listed'],
+    [false, 'Marital status (optional but common)'],
+    [true,  'Work experience in reverse chronological order'],
+    [false, 'All date ranges complete (month + year)'],
+    [true,  'Education section present'],
+    [false, 'German language level stated (even if A1)'],
+    [true,  'English language level stated'],
+    [false, '"Hobbies & Interests" section (valued by German employers)'],
+    [false, '"References available on request" at bottom'],
+  ];
+  document.getElementById('de-checklist').innerHTML = checklist.map(([done, text]) => `
+    <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem">
+      <span style="color:${done?'var(--success)':'var(--danger)'};font-size:1rem">${done?'✅':'❌'}</span>
+      <span style="color:${done?'var(--text)':'var(--muted)'}">${text}</span>
+    </div>`).join('');
+}
+
+function copyGermanCV() {
+  const cv = `LEBENSLAUF
+
+──────────────────────────────────────────────
+RUDWAN BAROUNI
+IT-Spezialist | Architekturingenieur | E-Commerce
+──────────────────────────────────────────────
+
+PERSÖNLICHE ANGABEN
+Vorname / Nachname:  Rudwan Barouni
+Adresse:             Bosnien und Herzegowina
+Telefon:             +387-61657883
+E-Mail:              Rudwan.barouni@gmail.com
+LinkedIn:            linkedin.com/in/rudwan-barouni-10b6a2a8
+Website:             reyobaron.github.io
+Nationalität:        Libyscher Staatsbürger
+Sprachen:            Englisch (fließend), Arabisch (Muttersprache)
+
+──────────────────────────────────────────────
+BERUFSERFAHRUNG
+──────────────────────────────────────────────
+
+2018              Etraan North Africa Food Company | Tripoli, Libyen
+                  Online-Marketing-Spezialist
+                  • Erstellung und Verwaltung von Social-Media-Kampagnen
+                  • Entwicklung von Unternehmenslogos und Werbematerialien
+                  • Direktmarketing, Vertriebsunterstützung und Lagerkoordination
+
+2015 – 2018       Aloria Alafdel – Architektur & Immobiliendienstleistungen | Tripoli, Libyen
+                  Inhaber & Betriebsleiter
+                  • Gründung und Leitung eines Architektur- und Immobilienunternehmens
+                  • Abwicklung von Renovierungsprojekten für internationale Kunden (u. a. Philippinische Botschaft)
+                  • Vertragsverhandlungen mit Ölunternehmen, NGOs und Expatriates
+                  • Aufbau eines Netzwerks von über 20 B2B-Partnern
+
+2012 – 2013       Albahr Almotawaset Office | Tripoli, Libyen
+                  Architekt
+                  • Entwurf und Planung von Wohn-, Krankenhaus- und Lagergebäuden
+                  • Erstellung technischer Zeichnungen und Baupläne mit AutoCAD
+
+──────────────────────────────────────────────
+AUSBILDUNG
+──────────────────────────────────────────────
+
+2004 – 2007       Bachelor of Architecture
+                  Alfaiha University, Tripoli, Libyen
+
+2014 – 2015       Akademisches Englisch & IELTS-Vorbereitung (Gesamtnote 5.5)
+                  British Study Centre, Oxford, Vereinigtes Königreich
+
+2018              PPL(A) Theoriekurs & Flugpraxis (16,5 Flugstunden)
+                  Airways Aviation, Huesca, Spanien
+
+──────────────────────────────────────────────
+KENNTNISSE & FÄHIGKEITEN
+──────────────────────────────────────────────
+
+IT & Software:        VS Code, GitHub Copilot, KI-Tools, Webentwicklung
+Design & Ingenieur:   Autodesk AutoCAD, 3D-Modellierung (Innen- & Außenbereich),
+                      Architekturzeichnungen, Detailplanung
+Digitales Marketing:  Social-Media-Werbung, Grafikdesign, Videobearbeitung, Fotografie
+Management:           Projektleitung, Betriebsmanagement, Kundenbetreuung
+
+──────────────────────────────────────────────
+SPRACHEN
+──────────────────────────────────────────────
+
+Arabisch   Muttersprache
+Englisch   Fließend (IELTS 5.5)
+Deutsch    Grundkenntnisse (Lernend)
+
+──────────────────────────────────────────────
+INTERESSEN
+──────────────────────────────────────────────
+
+Informationstechnologie, Architektur, Fotografie, Grafikdesign, Luftfahrt
+
+──────────────────────────────────────────────
+Referenzen auf Anfrage erhältlich.`;
+
+  navigator.clipboard.writeText(cv).then(() => {
+    const msg = document.getElementById('cv-copy-msg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3000);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+//  JOB PORTALS
+// ══════════════════════════════════════════════════════════
+const portals = [
+  { name: 'Indeed Deutschland',       icon: '🔵', color: '#003366', desc: 'Largest international job board in Germany', url: (k,l) => `https://de.indeed.com/jobs?q=${encodeURIComponent(k)}&l=${encodeURIComponent(l)}` },
+  { name: 'LinkedIn Jobs',            icon: '🔗', color: '#0077b5', desc: 'Professional network – create a strong profile', url: (k,l) => `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(k)}&location=${encodeURIComponent(l)}` },
+  { name: 'XING Jobs',                icon: '🟢', color: '#006567', desc: "Germany's leading professional network", url: (k,l) => `https://www.xing.com/jobs/search?keywords=${encodeURIComponent(k)}&location=${encodeURIComponent(l)}` },
+  { name: 'StepStone',                icon: '🟠', color: '#e8630a', desc: 'Premium German job portal, very popular with employers', url: (k,l) => `https://www.stepstone.de/jobs/${encodeURIComponent(k.replace(/ /g,'-'))}/in-${encodeURIComponent(l.replace(/ /g,'-'))}.html` },
+  { name: 'Bundesagentur für Arbeit', icon: '🏛', color: '#004b87', desc: "Germany's official employment agency", url: (k,l) => `https://www.arbeitsagentur.de/jobsuche/suche?was=${encodeURIComponent(k)}&wo=${encodeURIComponent(l)}` },
+  { name: 'Glassdoor Deutschland',    icon: '🪟', color: '#0caa41', desc: 'Job search + company reviews and salary insights', url: (k,l) => `https://www.glassdoor.de/Job/index.htm?suggestCount=0&suggestChosen=false&clickSource=searchBtn&typedKeyword=${encodeURIComponent(k)}&locT=N&locId=&jobType=` },
+  { name: 'Monster Deutschland',      icon: '🟣', color: '#6600cc', desc: 'Established global job board, strong in Germany', url: (k,l) => `https://www.monster.de/jobs/suche/?q=${encodeURIComponent(k)}&where=${encodeURIComponent(l)}` },
+  { name: 'Architektenkammer',        icon: '🏗', color: '#8b4513', desc: 'Architecture-specific jobs in Germany (requires recognition)', url: () => `https://www.bak.de/` },
+];
+
+function renderPortals() {
+  const keyword  = document.getElementById('job-keyword').value;
+  const location = document.getElementById('job-location').value;
+  document.getElementById('portal-list').innerHTML = portals.map(p => `
+    <a class="job-portal" href="${p.url(keyword, location)}" target="_blank" rel="noopener noreferrer">
+      <div class="portal-icon" style="background:${p.color}20;border:1px solid ${p.color}40">${p.icon}</div>
+      <div class="portal-info">
+        <h4>${p.name}</h4>
+        <p>${p.desc}</p>
+      </div>
+      <div class="portal-arrow">→</div>
+    </a>`).join('');
+
+  const roles = ['IT Specialist','CAD Designer','Architectural Technician','BIM Coordinator','Graphic Designer','Digital Marketing Manager','Project Manager','3D Designer','AutoCAD Specialist','Social Media Manager','eCommerce Manager','Technical Draftsman'];
+  document.getElementById('role-tags').innerHTML = roles.map(r => `
+    <span onclick="setJobSearch('${r}')" style="cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:.82rem;transition:all .2s"
+      onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
+      onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">${r}</span>`).join('');
+}
+
+function setJobSearch(role) {
+  document.getElementById('job-keyword').value = role;
+  renderPortals();
+}
+
+// ══════════════════════════════════════════════════════════
+//  INTERVIEW PREP
+// ══════════════════════════════════════════════════════════
+const qaData = [
+  {
+    cat: 'General',
+    q: 'Tell me about yourself. (Erzählen Sie mir etwas über sich.)',
+    a: `Start with your profession and key expertise, then briefly trace your career:\n\n"I am Rudwan Barouni, a multidisciplinary professional with over ten years of experience in architectural design, IT systems, and digital marketing. I have a Bachelor's degree in Architecture from Alfaiha University, and I've worked across North Africa and Europe — including running my own architectural firm, where I managed projects for international clients such as embassies and oil companies. I'm now looking to bring these skills to Germany, where I can grow within a structured, innovation-driven environment."`
+  },
+  {
+    cat: 'General',
+    q: 'Why do you want to work in Germany? (Warum möchten Sie in Deutschland arbeiten?)',
+    a: `"Germany is one of the world's leading economies with a strong culture of engineering, precision, and innovation — values that align perfectly with my professional background. I am drawn to Germany's international working environment, the clear career development paths, and the opportunity to contribute to high-quality projects. I am also actively learning German and committed to integrating fully into the work culture."`
+  },
+  {
+    cat: 'General',
+    q: 'What are your greatest strengths? (Was sind Ihre größten Stärken?)',
+    a: `Focus on 3 concrete strengths with evidence:\n\n"First, adaptability — I have worked across architecture, IT, and marketing in multiple countries, adjusting quickly to new tools and environments. Second, project ownership — I founded and ran my own company, which required end-to-end responsibility. Third, technical versatility — I am proficient in AutoCAD, AI tools, graphic design, and programming, which allows me to bridge technical and creative teams."`
+  },
+  {
+    cat: 'General',
+    q: 'What is your greatest weakness? (Was ist Ihre größte Schwäche?)',
+    a: `Be honest but frame it as a growth area:\n\n"My German language skills are currently at a beginner level — this is something I am actively working on through daily study. I believe that within six months of living and working in Germany I will reach conversational level. I've shown I can do this before — I improved my English to professional level while living in Libya."`
+  },
+  {
+    cat: 'Experience',
+    q: 'Describe a challenging project you managed. (Beschreiben Sie ein herausforderndes Projekt.)',
+    a: `Use the STAR method (Situation, Task, Action, Result):\n\n"At my architecture firm, I was contracted to renovate a building for the Philippine Embassy. The challenge was coordinating with an international client with very specific requirements while managing a local construction team with language barriers. I created detailed AutoCAD plans translated to visual guides, held weekly progress meetings, and delivered the project on time. The Embassy became a reference client and referred two further projects."`
+  },
+  {
+    cat: 'Experience',
+    q: 'What IT tools and software are you proficient in?',
+    a: `"I work regularly with VS Code for development tasks, GitHub Copilot and AI tools for productivity, and Autodesk AutoCAD for architectural drawings and 3D modelling. I have experience with social media advertising platforms (Meta Ads), graphic design tools, and video editing software. I stay current with new technologies — I adopted AI-assisted coding workflows early and continue to expand my technical skill set."`
+  },
+  {
+    cat: 'Experience',
+    q: 'Have you worked in an international environment?',
+    a: `"Yes — throughout my career I have worked with clients and organisations from different countries. At my architectural firm I managed contracts with the Philippine Embassy, international oil companies, and various NGOs. I studied in the UK and completed flight training in Spain. These experiences gave me strong cross-cultural communication skills and the ability to adapt to professional norms in different countries — including Germany."`
+  },
+  {
+    cat: 'Motivation',
+    q: 'Where do you see yourself in 5 years? (Wo sehen Sie sich in 5 Jahren?)',
+    a: `"In five years I aim to have established myself as a trusted member of a German company — ideally having grown into a senior specialist or team-lead role that combines my technical, design, and management capabilities. I also plan to be fully fluent in German and hold any additional certifications relevant to my field. Long term, I see myself building a career and a home in Germany."`
+  },
+  {
+    cat: 'Motivation',
+    q: 'Why should we hire you? (Warum sollten wir Sie einstellen?)',
+    a: `"Because I bring a rare combination that is hard to find in one person: I can design with AutoCAD, manage complex projects, build digital marketing campaigns, and work with modern IT and AI tools. I am highly self-motivated — I built a company from scratch — and I am not afraid of challenges. Most importantly, I am committed to contributing real value to your organisation from day one, not just filling a seat."`
+  },
+  {
+    cat: 'Practical',
+    q: 'Are you available to relocate to Germany? (Sind Sie bereit, nach Deutschland umzuziehen?)',
+    a: `"Yes, absolutely. Relocating to Germany is a central part of my career plan. I am well-organised and have international relocation experience. I can be available within [X weeks/months] of receiving a job offer, depending on visa processing time. I have already been researching housing and registration processes in Germany."`
+  },
+  {
+    cat: 'Practical',
+    q: 'What salary are you expecting? (Welche Gehaltsvorstellungen haben Sie?)',
+    a: `Research the market rate before the interview. A safe answer:\n\n"Based on my research of comparable roles in Germany for my level of experience, I am expecting a gross salary in the range of €35,000–€45,000 per year. However, I am flexible — I am more focused on finding the right role and company where I can grow and contribute than on a specific number. I'm open to discussing total compensation including benefits."`
+  },
+  {
+    cat: 'Practical',
+    q: 'Do you speak German? (Sprechen Sie Deutsch?)',
+    a: `Be honest and positive:\n\n"My German is currently at a beginner level — I understand basics and am actively studying every day. I am committed to reaching conversational German (B1) within six months. In the meantime, I am fully fluent in English, which I understand is the working language in many international companies in Germany. I see learning German as a priority, not an obstacle."`
+  }
+];
+
+let practiced = new Set(JSON.parse(localStorage.getItem('leila_practiced') || '[]'));
+let activeFilter = 'All';
+
+function renderInterview() {
+  const cats = ['All', ...new Set(qaData.map(q => q.cat))];
+  document.getElementById('qa-filters').innerHTML = cats.map(c => `
+    <button class="btn btn-sm ${c === activeFilter ? 'btn-primary' : 'btn-ghost'}" onclick="filterQA('${c}')">${c}</button>`).join('');
+
+  const filtered = activeFilter === 'All' ? qaData : qaData.filter(q => q.cat === activeFilter);
+  document.getElementById('qa-list').innerHTML = filtered.map((item, i) => {
+    const gIdx = qaData.indexOf(item);
+    const isPracticed = practiced.has(gIdx);
+    return `
+    <div class="qa-card" id="qa-${gIdx}">
+      <div class="qa-question" onclick="toggleQA(${gIdx})">
+        <span>
+          <span class="category-tag">${item.cat}</span>
+          ${item.q}
+        </span>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn btn-sm ${isPracticed ? 'btn-gold' : 'btn-ghost'}" style="margin:0;padding:4px 10px;font-size:.72rem" onclick="event.stopPropagation();togglePracticed(${gIdx})">
+            ${isPracticed ? '✅ Practiced' : '☐ Mark practiced'}
+          </button>
+          <span class="qa-arrow" id="arrow-${gIdx}">▼</span>
+        </div>
+      </div>
+      <div class="qa-answer" id="ans-${gIdx}">${item.a.replace(/\n/g,'<br/>')}</div>
+    </div>`;}).join('');
+
+  updatePracticeBar();
+}
+
+function filterQA(cat) {
+  activeFilter = cat;
+  renderInterview();
+}
+
+function toggleQA(i) {
+  const ans   = document.getElementById('ans-' + i);
+  const arrow = document.getElementById('arrow-' + i);
+  ans.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+function togglePracticed(i) {
+  if (practiced.has(i)) practiced.delete(i);
+  else practiced.add(i);
+  localStorage.setItem('leila_practiced', JSON.stringify([...practiced]));
+  renderInterview();
+}
+
+function resetPractice() {
+  if (!confirm('Reset all practice progress?')) return;
+  practiced = new Set();
+  localStorage.removeItem('leila_practiced');
+  renderInterview();
+}
+
+function updatePracticeBar() {
+  const total = qaData.length;
+  const done  = practiced.size;
+  const pct   = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('practice-fill').style.width = pct + '%';
+  document.getElementById('practice-count').textContent = `${done} / ${total} practiced`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  AI CHAT
+// ══════════════════════════════════════════════════════════
+let chatHistory = [];
+let isListening = false;
+let recognition = null;
+let micGranted = false;
+let ttsEnabled = JSON.parse(localStorage.getItem('leila_tts_enabled') || 'true');
+let recognitionFinalText = '';
+let leilaTasks = JSON.parse(localStorage.getItem('leila_tasks') || '[]');
+
+const quickPrompts = [
+  { label: '🚀 Find jobs and open portals', msg: 'Find jobs for IT Specialist in Berlin and open the job portals now.' },
+  { label: '📨 Prepare application package', msg: 'Apply to IT Specialist at Siemens in Berlin.' },
+  { label: '✉️ Write a cover letter for a tech job', msg: 'Write me a cover letter in English for an IT Specialist position at a German tech company.' },
+  { label: '🇩🇪 Translate my profile to German', msg: 'Translate my professional profile summary to German for a CV.' },
+  { label: '🎯 Best jobs for me in Germany', msg: 'Based on my CV, what are the best job titles I should search for in Germany?' },
+  { label: '📧 Follow-up email after applying', msg: 'Write a professional follow-up email in German to send 2 weeks after submitting a job application.' },
+  { label: '💡 How to improve my CV', msg: 'What are the top 5 things I should improve on my CV for the German job market?' },
+  { label: '🗣️ Interview in German', msg: 'How should I answer "Erzählen Sie mir etwas über sich" (Tell me about yourself) in German?' },
+];
+
+function initChat() {
+  updateTTSButton();
+  const qb = document.getElementById('quick-btns');
+  if (qb) qb.innerHTML = quickPrompts.map((p,i) =>
+    `<span class="quick-btn" onclick="useQuickPrompt(${i})">${p.label}</span>`).join('');
+
+  renderTasks();
+  const msgs = document.getElementById('chat-messages');
+  if (msgs && msgs.children.length === 0) {
+    appendMsg('leila', `Hello Rudwan! 👋 I'm Leila, your personal secretary. I have your CV loaded and I'm ready to help you land a job in Germany.\n\nYou can type a command, click a quick prompt above, or press 🎤 to speak.\n\nNo key needed. Just give me tasks and I will help.`);
+  }
+}
+
+function useQuickPrompt(i) {
+  document.getElementById('chat-input').value = quickPrompts[i].msg;
+  sendMessage();
+}
+
+function appendMsg(role, text) {
+  const box = document.getElementById('chat-messages');
+  const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `
+    <div class="msg-avatar">${role === 'leila' ? '🤵‍♀️' : '👤'}</div>
+    <div>
+      <div class="msg-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br/>')}</div>
+      <div class="msg-time">${time}</div>
+    </div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+
+  if (role === 'leila') {
+    speakLeilaText(text);
+  }
+
+  return div;
+}
+
+function updateTTSButton() {
+  const btn = document.getElementById('tts-toggle-btn');
+  if (!btn) return;
+  btn.textContent = ttsEnabled ? '🔊 Voice On' : '🔇 Voice Off';
+}
+
+function toggleTTS() {
+  ttsEnabled = !ttsEnabled;
+  localStorage.setItem('leila_tts_enabled', JSON.stringify(ttsEnabled));
+  if (!ttsEnabled && window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+  updateTTSButton();
+}
+
+function pickLeilaVoice() {
+  if (!window.speechSynthesis) return null;
+  const voices = window.speechSynthesis.getVoices() || [];
+  if (!voices.length) return null;
+
+  const preferred = [
+    'Google UK English Female',
+    'Microsoft Zira',
+    'Google US English',
+    'Microsoft Aria'
+  ];
+
+  for (const name of preferred) {
+    const found = voices.find(v => v.name.includes(name));
+    if (found) return found;
+  }
+
+  return voices.find(v => /en|ar|de/i.test(v.lang)) || voices[0];
+}
+
+function speakLeilaText(text) {
+  if (!ttsEnabled) return;
+  if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') return;
+
+  const clean = String(text)
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!clean) return;
+
+  const utterance = new SpeechSynthesisUtterance(clean);
+  const voice = pickLeilaVoice();
+  if (voice) utterance.voice = voice;
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+function appendTyping() {
+  const box = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg leila'; div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-avatar">🤵‍♀️</div><div><div class="msg-bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+function removeTyping() { const t = document.getElementById('typing-indicator'); if (t) t.remove(); }
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = ''; input.style.height = '';
+
+  appendMsg('user', text);
+  chatHistory.push({ role: 'user', content: text });
+
+  document.getElementById('send-btn').disabled = true;
+  appendTyping();
+
+  const reply = localFallback(text);
+  setTimeout(() => {
+    removeTyping();
+    appendMsg('leila', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
+  }, 350);
+  document.getElementById('send-btn').disabled = false;
+}
+
+function parseRoleLocation(inputText) {
+  const trimField = v => v.replace(/[.,;:!?]+$/g, '').trim();
+  const cleaned = inputText.replace(/[!?]/g, ' ').replace(/\s+/g, ' ').trim();
+  let role = (document.getElementById('job-keyword')?.value || 'IT Specialist AutoCAD').trim();
+  let location = (document.getElementById('job-location')?.value || 'Deutschland').trim();
+
+  const roleLoc = cleaned.match(/(?:for|as)\s+(.+?)\s+(?:in|at)\s+([a-zA-Z\s.-]+)$/i) ||
+                  cleaned.match(/(?:fur|fuer|für)\s+(.+?)\s+in\s+([a-zA-Z\s.-]+)$/i);
+  if (roleLoc) {
+    role = trimField(roleLoc[1]);
+    location = trimField(roleLoc[2]);
+    return { role, location };
+  }
+
+  const locOnly = cleaned.match(/\bin\s+([a-zA-Z\s.-]+)$/i);
+  if (locOnly) location = trimField(locOnly[1]);
+
+  return { role, location };
+}
+
+function getPortalLinks(keyword, location, max = 5) {
+  return jobPortals.slice(0, max).map(p => ({
+    name: p.name,
+    url: p.url(keyword, location)
+  }));
+}
+
+function runJobHunt(keyword, location) {
+  const keyInput = document.getElementById('job-keyword');
+  const locInput = document.getElementById('job-location');
+  if (keyInput) keyInput.value = keyword;
+  if (locInput) locInput.value = location;
+  switchTab('jobs');
+  renderPortals();
+
+  const links = getPortalLinks(keyword, location, 5);
+  if (links.length) {
+    window.open(links[0].url, '_blank', 'noopener');
+  }
+  return links;
+}
+
+function extractApplicationDetails(rawText) {
+  const trimField = v => v.replace(/[.,;:!?]+$/g, '').trim();
+  const match = rawText.match(/apply(?:\s+to)?\s+(?:the\s+)?(.+?)\s+(?:at|with)\s+(.+?)(?:\s+in\s+(.+))?$/i);
+  if (!match) return null;
+  return {
+    job: trimField(match[1]),
+    company: trimField(match[2]),
+    city: trimField(match[3] || 'Germany')
+  };
+}
+
+function prepareApplicationPack(job, company, city) {
+  document.getElementById('cl-company').value = company;
+  document.getElementById('cl-jobtitle').value = job;
+  document.getElementById('cl-city').value = city;
+  document.getElementById('cl-lang').value = 'en';
+  generateCoverLetter();
+  switchTab('cover');
+
+  const apps = getApps();
+  apps.push({
+    id: Date.now(),
+    company,
+    job,
+    city,
+    date: new Date().toISOString().split('T')[0],
+    status: 'waiting',
+    notes: 'Prepared by Leila chat command'
+  });
+  saveApps(apps);
+  updateStats();
+
+  const subject = encodeURIComponent(`Application for ${job} - ${CV.name}`);
+  const body = encodeURIComponent(
+`Dear Hiring Team at ${company},
+
+Please find my application for the ${job} position in ${city}. I have prepared my cover letter and CV and would appreciate the opportunity to discuss my fit for this role.
+
+Kind regards,
+${CV.name}
+${CV.phone}
+${CV.email}`
+  );
+
+  return `mailto:?subject=${subject}&body=${body}`;
+}
+
+function localFallback(text) {
+  const t = text.toLowerCase();
+  if (/(find|search|look for).*(job|jobs|position|positions)|find me a job|look for a job/i.test(t)) {
+    const { role, location } = parseRoleLocation(text);
+    const links = runJobHunt(role, location);
+    addTask(`Apply to 3 ${role} roles in ${location}`);
+    const linkHtml = links.map(l => `- <a href="${l.url}" target="_blank" rel="noopener">${l.name}</a>`).join('<br/>');
+    return `Action completed. I started your live job hunt for "${role}" in "${location}" and opened the first portal automatically.
+
+Use these search links now:<br/>${linkHtml}
+
+I also added a task: Apply to 3 ${role} roles in ${location}.`;
+  }
+
+  if (t.includes('apply')) {
+    const details = extractApplicationDetails(text);
+    if (!details) {
+      return 'I can execute the application workflow, but I need details in this format: "Apply to IT Specialist at Siemens in Berlin".';
+    }
+
+    const mailto = prepareApplicationPack(details.job, details.company, details.city);
+    addTask(`Submit application to ${details.company} for ${details.job}`);
+
+    return `Application workflow executed for ${details.company}.
+
+Done now:
+- Cover letter generated and prefilled.
+- Tracker entry created with status Waiting.
+- Task added for final submission.
+- Email draft ready: <a href="${mailto}" target="_blank">Open email draft</a>
+
+Note: full one-click submission to company websites is blocked by login, captcha, and legal consent, but I prepared everything up to the final send/apply step.`;
+  }
+
+  if (t.startsWith('task:')) {
+    const task = text.slice(5).trim();
+    if (task) {
+      addTask(task);
+      return `Task saved: "${task}".\n\nI can now help you complete it step by step.`;
+    }
+    return 'Please write your task after task: (example: task: Apply to 3 IT jobs in Berlin).';
+  }
+
+  if (t.includes('add task')) {
+    const cleaned = text.replace(/add task:?/i, '').trim();
+    if (cleaned) {
+      addTask(cleaned);
+      return `Task added: "${cleaned}".`;
+    }
+    return 'Tell me the task text after "add task" and I will save it.';
+  }
+
+  if (t.includes('cover letter') || t.includes('anschreiben'))
+    return 'Use the ✉️ Cover Letter tab for full automatic letters, or tell me the company name + job title here and I will draft one for you.';
+  if (t.includes('cv') || t.includes('resume') || t.includes('lebenslauf'))
+    return 'For CV updates, go to 🇩🇪 CV für Deutschland tab. If you paste a role title here, I will tell you exactly what to adjust in your CV for that role.';
+  if (t.includes('job') || t.includes('arbeit'))
+    return 'Use the 🔍 Job Search tab. Recommended searches for you: IT Specialist, AutoCAD Specialist, CAD Designer, BIM Coordinator, Digital Marketing Specialist.';
+  if (t.includes('interview') || t.includes('vorstellungsgespräch'))
+    return 'Go to 🎤 Interview Prep for tailored Q&A. Quick answer pattern: introduce background, match experience to role, finish with why Germany/company.';
+  if (t.includes('german') || t.includes('deutsch') || t.includes('translate'))
+    return 'I can help with German text. Example prompt: "Translate this email to professional German: ..."';
+  return 'I am ready, Rudwan. Give me a command or write task: ... and I will organize it for you.';
+}
+
+function addTask(taskText) {
+  leilaTasks.push({ id: Date.now(), text: taskText, done: false });
+  localStorage.setItem('leila_tasks', JSON.stringify(leilaTasks));
+  renderTasks();
+}
+
+function addTaskFromInput() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) {
+    alert('Write a task first, then click Task.');
+    return;
+  }
+  addTask(text);
+  appendMsg('user', `Task: ${text}`);
+  appendMsg('leila', `Task saved: "${text}".`);
+  input.value = '';
+  input.style.height = '';
+}
+
+function toggleTaskDone(id) {
+  leilaTasks = leilaTasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
+  localStorage.setItem('leila_tasks', JSON.stringify(leilaTasks));
+  renderTasks();
+}
+
+function deleteTask(id) {
+  leilaTasks = leilaTasks.filter(t => t.id !== id);
+  localStorage.setItem('leila_tasks', JSON.stringify(leilaTasks));
+  renderTasks();
+}
+
+function renderTasks() {
+  const root = document.getElementById('task-list');
+  if (!root) return;
+  if (!leilaTasks.length) {
+    root.innerHTML = '<div style="font-size:.8rem;color:var(--muted);margin-bottom:8px">No tasks yet. Type a command and click Task.</div>';
+    return;
+  }
+  root.innerHTML = leilaTasks.map(t => `
+    <div class="task-item ${t.done ? 'done' : ''}">
+      <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskDone(${t.id})" />
+      <div class="task-text">${esc(t.text)}</div>
+      <button class="btn btn-danger btn-sm" style="margin:0" onclick="deleteTask(${t.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 130) + 'px';
+}
+
+// ── VOICE ──
+function setMicStatus(message, isError = false) {
+  const el = document.getElementById('mic-status');
+  if (!el) return;
+  el.textContent = message;
+  el.style.color = isError ? 'var(--danger)' : 'var(--muted)';
+}
+
+function showMicPermissionHelp() {
+  const steps = [
+    '1) Open Leila in Chrome or Edge.',
+    '2) Click the lock/site icon near the address bar.',
+    '3) Set Microphone to Allow.',
+    '4) Reload the page and click the mic button again.',
+    '5) If you opened Leila as a file (file://), use localhost instead for reliable mic access.'
+  ].join('\n');
+  alert('Microphone setup help:\n\n' + steps);
+}
+
+async function ensureMicrophoneAccess() {
+  if (micGranted) return true;
+
+  if (location.protocol === 'file:') {
+    setMicStatus('File mode can block microphone. Prefer localhost.', true);
+  }
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setMicStatus('This browser cannot access microphone devices.', true);
+    return false;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(track => track.stop());
+    micGranted = true;
+    setMicStatus('Microphone connected. Tap 🎤 and speak.');
+    return true;
+  } catch (err) {
+    const reason = err && err.name ? err.name : 'Unknown error';
+    if (reason === 'NotAllowedError') {
+      if (location.protocol === 'file:') {
+        setMicStatus('Microphone denied. Open on localhost and allow mic permission.', true);
+      } else {
+        setMicStatus('Microphone denied. Click lock icon -> Microphone: Allow -> reload.', true);
+      }
+      showMicPermissionHelp();
+      return false;
+    }
+    setMicStatus(`Microphone access failed: ${reason}. Please allow mic permission.`, true);
+    return false;
+  }
+}
+
+function initVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    setMicStatus('Voice recognition is not supported in this browser. Use Chrome or Edge.', true);
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = navigator.language || 'en-US';
+  recognition.onstart = () => {
+    recognitionFinalText = '';
+    setMicStatus('Listening... speak now.');
+  };
+  recognition.onresult = e => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const chunk = e.results[i][0].transcript;
+      if (e.results[i].isFinal) recognitionFinalText += chunk + ' ';
+      else interim += chunk;
+    }
+
+    const fullText = `${recognitionFinalText}${interim}`.trim();
+    const input = document.getElementById('chat-input');
+    input.value = fullText;
+    autoResize(input);
+    setMicStatus('Listening... tap ⏹ when done speaking.');
+  };
+  recognition.onend = () => {
+    if (isListening) {
+      isListening = false;
+      const btn = document.getElementById('voice-btn');
+      if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+      setMicStatus('Listening stopped. You can edit text, then press ➤ to send.');
+    }
+  };
+  recognition.onerror = e => {
+    const map = {
+      'not-allowed': 'Microphone permission denied. Please allow mic in browser settings.',
+      'service-not-allowed': 'Speech service blocked by browser settings.',
+      'no-speech': 'No speech detected. Try again and speak clearly.',
+      'audio-capture': 'No microphone detected. Check your mic device.',
+      'network': 'Network issue while using speech recognition.'
+    };
+    setMicStatus(map[e.error] || `Voice error: ${e.error}`, true);
+    stopVoice();
+  };
+}
+async function toggleVoice() {
+  if (!recognition) {
+    setMicStatus('Voice input is not supported in this browser. Try Chrome or Edge.', true);
+    return;
+  }
+  if (isListening) { stopVoice(); }
+  else {
+    const allowed = await ensureMicrophoneAccess();
+    if (!allowed) return;
+    isListening = true;
+    document.getElementById('voice-btn').classList.add('listening');
+    document.getElementById('voice-btn').textContent = '⏹';
+    try {
+      recognition.start();
+    } catch (e) {
+      setMicStatus('Could not start listening. Tap 🎤 again.', true);
+      stopVoice();
+    }
+  }
+}
+function stopVoice() {
+  isListening = false;
+  const btn = document.getElementById('voice-btn');
+  if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+  const input = document.getElementById('chat-input');
+  if (input && recognitionFinalText.trim() && !input.value.trim()) {
+    input.value = recognitionFinalText.trim();
+    autoResize(input);
+  }
+  setMicStatus('Dictation captured. Press ➤ to send, or keep editing.');
+  try { recognition.stop(); } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  updateStats();
+  document.getElementById('tr-date').value = new Date().toISOString().split('T')[0];
+  initVoice();
+  if (window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = () => updateTTSButton();
+  }
+  if (location.protocol === 'file:') {
+    setMicStatus('Tip: if mic fails on file mode, open Leila via localhost for best microphone support.');
+  }
+  // patch switchTab to also init chat
+  const _origSwitch = window.switchTab;
+  window.switchTab = function(id) {
+    _origSwitch.call(this, id);
+    if (id === 'chat') initChat();
+  };
+});
+</script>
+</body>
+</html>
