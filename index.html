@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rudwan Barouni — Barouni Codes</title>
   <meta name="description" content="Portfolio of Rudwan Barouni — Software developer. Mobile apps, AI bots, websites, and enterprise systems for companies, factories & embassies.">
-  <link rel="canonical" href="https://barounicodes.netlify.app">
+  <link rel="canonical" href="https://reyobaron.github.io">
   <meta property="og:title" content="Rudwan Barouni — Barouni Codes">
   <meta property="og:description" content="IT Specialist. Mobile apps, AI bots, websites, and enterprise systems.">
-  <meta property="og:url" content="https://barounicodes.netlify.app">
+  <meta property="og:url" content="https://reyobaron.github.io">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://barounicodes.netlify.app/assets/red-panda-codes.jpeg">
+  <meta property="og:image" content="https://reyobaron.github.io/assets/red-panda-codes.jpeg">
   <link rel="icon" type="image/jpeg" href="assets/red-panda-codes.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -168,6 +168,19 @@
     }
 
     .nav-links a:hover { color: var(--white); }
+
+    .nav-app-shortcut {
+      display: none;
+      color: var(--white);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      border-radius: 999px;
+      padding: 8px 12px;
+      line-height: 1;
+    }
 
     /* ─── HERO ─── */
     .hero {
@@ -373,6 +386,18 @@
       object-fit: cover;
       box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       margin-bottom: 24px;
+    }
+
+    .app-card-logo-emoji {
+      width: 90px;
+      height: 90px;
+      border-radius: 22px;
+      margin: 0 auto 24px;
+      display: grid;
+      place-items: center;
+      font-size: 44px;
+      background: linear-gradient(140deg, #003087, #009ade);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .app-card h3 {
@@ -771,7 +796,7 @@
 
     .startup-title {
       position: absolute;
-      top: calc(50% + clamp(88px, 12vw, 132px));
+      top: calc(50% + clamp(108px, 14vw, 164px));
       left: 50%;
       transform: translate3d(-140vw, -50%, 0);
       color: var(--white);
@@ -880,12 +905,16 @@
     /* ─── RESPONSIVE ─── */
     @media (max-width: 768px) {
       .nav-links { display: none; }
+      .nav-app-shortcut { display: inline-flex; align-items: center; }
       .apps-grid { grid-template-columns: 1fr; max-width: 420px; }
       .work-grid { grid-template-columns: 1fr; }
       .services-grid { grid-template-columns: 1fr; }
       .hero { padding: 100px 20px 60px; }
       section { padding: 64px 20px; }
       .social-grid { flex-direction: column; align-items: center; }
+      .startup-title {
+        top: calc(50% + clamp(112px, 22vw, 170px));
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -926,6 +955,7 @@
       <li><a href="#contact">Contact</a></li>
       <li><a href="#social">Social</a></li>
     </ul>
+    <a href="#apps" class="nav-app-shortcut">📲 Apps</a>
   </nav>
 
   <!-- HERO -->
@@ -960,6 +990,25 @@
     <p class="section-subtitle">Apps I've built and published. Free to download and use on Android & iPhone.</p>
 
     <div class="apps-grid">
+
+      <!-- MSC SHIPPING GAME -->
+      <div class="app-card">
+        <div class="app-card-logo-emoji" aria-hidden="true">🚢</div>
+        <h3 class="notranslate" translate="no" lang="en">MSC Shipping Game</h3>
+        <span class="app-version">v1.0 &bull; Web App</span>
+        <p>Interactive cargo logistics simulator with container loading, route-based pricing, and live-style shipment tracking map.</p>
+        <div class="app-languages">
+          <span class="lang-badge">🇬🇧 English</span>
+          <span class="lang-badge">🇧🇦 Bosnian-ready</span>
+        </div>
+        <div class="app-stats">
+          <span>📦 Web App</span>
+          <span>💻 Browser</span>
+        </div>
+        <a href="msc-shipping-game/index.html" class="download-btn download-btn-ios">
+          🌐 Open App
+        </a>
+      </div>
 
       <!-- GLOBAL APP -->
       <div class="app-card">

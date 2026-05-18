@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>MSC Shipping Game</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --navy:#003087; --blue:#009ADE; --dark:#001a4d; --bg:#060f1e;
+  --gold:#f0a500; --green:#00a86b; --red:#e05050;
+}
+html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); font-family:'Segoe UI',Arial,sans-serif; color:#fff; }
+
+/* ── SCREEN MANAGEMENT ── */
+.screen { position:absolute; inset:0; display:none; flex-direction:column; }
+.screen.active { display:flex; }
+
+/* ── HEADER ── */
+.hdr {
+  background:var(--navy); border-bottom:3px solid var(--blue);
+  padding:10px 16px; display:flex; align-items:center; gap:12px;
+  flex-shrink:0; height:52px;
+}
+.hdr-logo {
+  font-size:22px; font-weight:900; letter-spacing:3px;
+  background:var(--blue); padding:3px 10px; border-radius:4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:64px;
+  height:34px;
+}
+.brand-logo-img {
+  max-height:24px;
+  max-width:100%;
+  display:block;
+  object-fit:contain;
+}
+.hdr-title { font-size:15px; font-weight:600; color:rgba(255,255,255,0.85); }
+.hdr-back {
+  margin-left:auto; background:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.3); color:#fff;
+  padding:5px 12px; border-radius:6px; cursor:pointer; font-size:13px;
+  transition:background 0.2s;
+}
+.hdr-back:hover { background:rgba(255,255,255,0.25); }
+
+/* ══════════════════════════════════
+   HOME SCREEN
+══════════════════════════════════ */
+#s-home {
+  background:linear-gradient(180deg,#001a4d 0%,#060f1e 60%,#061822 100%);
+  align-items:center; justify-content:center; overflow:hidden;
+}
+.home-ocean-bg {
+  position:absolute; inset:0; pointer-events:none; overflow:hidden;
+}
+.wave {
+  position:absolute; bottom:0; left:-50%; width:200%;
+  height:120px; border-radius:45%;
+  animation:wave 7s infinite linear;
+}
+.wave1 { background:rgba(0,154,222,0.07); animation-duration:7s; }
+.wave2 { background:rgba(0,154,222,0.05); animation-duration:11s; bottom:15px; }
+.wave3 { background:rgba(0,48,135,0.08); animation-duration:9s; bottom:5px; }
+@keyframes wave { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+.home-wrap { position:relative; text-align:center; padding:20px; max-width:520px; z-index:1; }
+.home-logo-big {
+  font-size:56px; font-weight:900; letter-spacing:8px;
+  background:var(--blue); display:inline-block;
+  padding:10px 32px; border-radius:10px; margin-bottom:8px;
+  box-shadow:0 8px 40px rgba(0,154,222,0.5);
+}
+.home-logo-big img {
+  max-height:54px;
+  max-width:240px;
+  display:block;
+  object-fit:contain;
+}
+.home-sub { font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:4px; }
+.home-tag { font-size:12px; color:rgba(255,255,255,0.35); margin-bottom:36px; }
+.home-ship { font-size:56px; animation:bob 3s ease-in-out infinite; display:block; margin-bottom:28px; }
+@keyframes bob { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-12px) rotate(2deg)} }
+
+.home-btns { display:flex; flex-direction:column; gap:14px; align-items:center; }
+.hbtn {
+  width:320px; padding:18px 22px; border:none; border-radius:14px;
+  cursor:pointer; display:flex; align-items:center; gap:14px;
+  font-size:15px; font-weight:600; transition:all 0.3s; text-align:left;
+}
+.hbtn-blue { background:linear-gradient(135deg,var(--blue),#0070b0); color:#fff; box-shadow:0 6px 24px rgba(0,154,222,0.45); }
+.hbtn-green { background:linear-gradient(135deg,var(--green),#007848); color:#fff; box-shadow:0 6px 24px rgba(0,168,107,0.4); }
+.hbtn:hover { transform:translateY(-4px); filter:brightness(1.1); }
+.hbtn-ico { font-size:34px; }
+.hbtn-txt strong { display:block; font-size:16px; margin-bottom:2px; }
+.hbtn-txt span { font-size:12px; opacity:0.75; }
+.maker-card {
+  position:fixed;
+  top:14px;
+  left:14px;
+  right:auto;
+  margin-top:0;
+  text-align:left;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.16);
+  border-radius:10px;
+  padding:6px 8px;
+  width:188px;
+  max-width:36vw;
+  z-index:3;
+}
+.maker-title {
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:rgba(255,255,255,0.58);
+  margin-bottom:4px;
+}
+.maker-line {
+  font-size:10px;
+  color:rgba(255,255,255,0.9);
+  margin-bottom:2px;
+}
+.maker-line strong { color:#fff; }
+.maker-note {
+  margin-top:5px;
+  font-size:9px;
+  color:rgba(255,255,255,0.72);
+  line-height:1.3;
+}
+
+/* ══════════════════════════════════
+   CARGO LOADER
+══════════════════════════════════ */
+#s-cargo { background:var(--bg); }
+.cargo-grid {
+  flex:1; display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:10px; padding:10px; overflow:hidden; min-height:0;
+}
+.cpanel {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09);
+  border-radius:12px; padding:12px; display:flex; flex-direction:column;
+  gap:8px; overflow:hidden;
+}
+.ptitle {
+  font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:1px; color:var(--blue);
+  border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:6px; flex-shrink:0;
+}
+.items-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; flex:1; overflow-y:auto; }
+.ci {
+  background:rgba(255,255,255,0.07); border:2px solid rgba(255,255,255,0.12);
+  border-radius:10px; padding:10px 6px; text-align:center;
+  cursor:grab; transition:all 0.2s; user-select:none; -webkit-user-select:none;
+}
+.ci:hover { background:rgba(0,154,222,0.2); border-color:var(--blue); transform:scale(1.04); }
+.ci:active { cursor:grabbing; }
+.ci-ico { font-size:26px; margin-bottom:3px; }
+.ci-name { font-size:10px; font-weight:600; }
+.ci-sub { font-size:9px; color:rgba(255,255,255,0.4); }
+.ci-price { font-size:10px; color:var(--gold); font-weight:700; }
+
+/* Container Visual */
+.sz-row { display:flex; gap:5px; flex-shrink:0; }
+.sz-btn {
+  flex:1; padding:5px 2px; border:1px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.05); color:#fff; border-radius:6px;
+  cursor:pointer; font-size:10px; text-align:center; transition:all 0.2s;
+}
+.sz-btn.sel { background:var(--blue); border-color:var(--blue); font-weight:700; }
+.cbox {
+  flex:1; border:2.5px solid var(--gold); border-radius:8px;
+  background:rgba(240,165,0,0.04); position:relative; overflow:hidden;
+  min-height:130px; display:flex; flex-direction:column; justify-content:flex-end;
+}
+.cbox-label {
+  position:absolute; top:5px; left:50%; transform:translateX(-50%);
+  font-size:9px; color:var(--gold); font-weight:700; letter-spacing:1px; opacity:0.6;
+}
+.cbox-stripes {
+  position:absolute; inset:0; opacity:0.04;
+  background:repeating-linear-gradient(90deg,#f0a500 0px,#f0a500 2px,transparent 2px,transparent 20px);
+}
+.cdrop {
+  flex:1; min-height:80px; display:flex; flex-wrap:wrap;
+  align-content:flex-end; gap:3px; padding:6px;
+  border-radius:6px; transition:background 0.2s;
+}
+.cdrop.dover { background:rgba(0,154,222,0.12); outline:2px dashed var(--blue); }
+.item-placed { font-size:18px; animation:dropin 0.3s ease; }
+@keyframes dropin { from{transform:translateY(-15px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+/* Bars */
+.bar-wrap { flex-shrink:0; margin-top:4px; }
+.bar-lbl { font-size:10px; color:rgba(255,255,255,0.5); display:flex; justify-content:space-between; margin-bottom:3px; }
+.bar-track { height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width 0.35s ease; }
+.bar-vol { background:linear-gradient(90deg,var(--green),var(--blue)); }
+.bar-wt { background:linear-gradient(90deg,var(--gold),var(--red)); }
+
+/* Cost Panel */
+.dest-sel {
+  width:100%; padding:7px 10px;
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.18);
+  border-radius:8px; color:#fff; font-size:12px; cursor:pointer; flex-shrink:0;
+}
+.dest-sel option { background:#0a1628; }
+.calc-note {
+  font-size:10px;
+  color:rgba(255,255,255,0.45);
+  min-height:28px;
+}
+.map-tools {
+  display:flex;
+  gap:6px;
+  margin-top:6px;
+  align-items:center;
+}
+.map-url {
+  flex:1;
+  padding:7px 9px;
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:8px;
+  background:rgba(255,255,255,0.07);
+  color:#fff;
+  font-size:11px;
+}
+.map-url::placeholder { color:rgba(255,255,255,0.4); }
+.map-btn {
+  padding:7px 9px;
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:8px;
+  background:rgba(0,154,222,0.2);
+  color:#fff;
+  font-size:11px;
+  cursor:pointer;
+}
+.map-btn:hover { background:rgba(0,154,222,0.35); }
+.map-note {
+  font-size:10px;
+  color:rgba(255,255,255,0.45);
+  line-height:1.3;
+}
+.cost-rows { flex:1; display:flex; flex-direction:column; gap:4px; }
+.crow {
+  display:flex; justify-content:space-between; font-size:11px;
+  color:rgba(255,255,255,0.65); padding:3px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.crow.total {
+  color:#fff; font-weight:700; font-size:14px;
+  border-bottom:none; border-top:2px solid rgba(255,255,255,0.15);
+  padding-top:7px; margin-top:4px;
+}
+.crow .cv { color:var(--gold); font-weight:600; }
+.send-btn {
+  width:100%; padding:13px; margin-top:auto; flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),#0070b0);
+  border:none; border-radius:10px; color:#fff; font-size:14px;
+  font-weight:700; cursor:pointer; transition:all 0.3s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.send-btn:hover:not(:disabled) { filter:brightness(1.15); transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,154,222,0.5); }
+.send-btn:disabled { opacity:0.35; cursor:not-allowed; }
+.clear-link {
+  background:none; border:none; color:rgba(255,255,255,0.35);
+  font-size:11px; cursor:pointer; text-align:center; flex-shrink:0;
+  padding:2px; transition:color 0.2s;
+}
+.clear-link:hover { color:var(--red); }
+
+/* Drag ghost */
+.drag-ghost {
+  position:fixed; pointer-events:none; z-index:9999;
+  font-size:38px; opacity:0.85; transform:translate(-50%,-50%);
+}
+
+/* ══════════════════════════════════
+   VOYAGE SCREEN
+══════════════════════════════════ */
+#s-voyage { background:#06101e; }
+#voyage-canvas { display:block; width:100%; flex:1; min-height:0; }
+.voy-bar {
+  background:rgba(0,0,0,0.55); padding:8px 16px;
+  display:flex; align-items:center; gap:16px; flex-shrink:0; height:56px;
+}
+.vstat { display:flex; flex-direction:column; align-items:center; min-width:70px; }
+.vstat-lbl { font-size:9px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; }
+.vstat-val { font-size:13px; font-weight:700; }
+.vprog { flex:1; height:6px; background:rgba(255,255,255,0.12); border-radius:3px; overflow:hidden; }
+.vprog-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--green)); border-radius:3px; transition:width 0.1s; }
+
+/* ══════════════════════════════════
+   TRACKER INPUT
+══════════════════════════════════ */
+#s-track-in {
+  background:linear-gradient(180deg,var(--navy) 0%,var(--bg) 100%);
+  align-items:center; justify-content:center;
+}
+.tform {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px; padding:28px; width:92%; max-width:460px;
+}
+.tform h2 { font-size:20px; color:var(--blue); margin-bottom:6px; }
+.tform p { font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:20px; }
+.tin-row { display:flex; gap:8px; margin-bottom:6px; }
+.tin {
+  flex:1; padding:11px 14px; background:rgba(255,255,255,0.09);
+  border:2px solid rgba(255,255,255,0.18); border-radius:8px;
+  color:#fff; font-size:15px; font-family:monospace;
+  text-transform:uppercase; letter-spacing:2px; outline:none;
+  transition:border-color 0.2s;
+}
+.tin:focus { border-color:var(--blue); }
+.tgo {
+  padding:11px 18px; background:var(--blue); border:none;
+  border-radius:8px; color:#fff; font-size:13px; font-weight:700;
+  cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.tgo:hover { background:#00b0ff; }
+.terr {
+  display:none; color:#ff7070; font-size:12px; padding:7px 10px;
+  background:rgba(255,80,80,0.08); border:1px solid rgba(255,80,80,0.25);
+  border-radius:6px; margin-bottom:12px;
+}
+.demos-title { font-size:11px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.demo-row {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09);
+  border-radius:8px; padding:9px 12px; margin-bottom:7px;
+  cursor:pointer; display:flex; align-items:center; gap:10px;
+  transition:all 0.2s;
+}
+.demo-row:hover { background:rgba(0,154,222,0.12); border-color:var(--blue); }
+.demo-code { font-family:monospace; font-size:13px; font-weight:700; color:var(--blue); letter-spacing:1px; }
+.demo-desc { font-size:11px; color:rgba(255,255,255,0.5); }
+.tag {
+  margin-left:auto; font-size:9px; padding:3px 7px; border-radius:10px;
+  font-weight:700; white-space:nowrap;
+}
+.tag-transit { background:rgba(0,154,222,0.25); color:var(--blue); }
+.tag-arrived { background:rgba(0,168,107,0.25); color:var(--green); }
+
+/* ══════════════════════════════════
+   TRACKER MAP
+══════════════════════════════════ */
+#s-track-map { background:#06101e; }
+#track-canvas { display:block; width:100%; flex:1; min-height:0; }
+.track-bar {
+  background:rgba(0,0,0,0.65); padding:10px 16px; flex-shrink:0; height:58px;
+  display:grid; grid-template-columns:repeat(5,1fr); gap:8px;
+}
+.tbi { display:flex; flex-direction:column; }
+.tbi-lbl { font-size:9px; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:1px; margin-bottom:1px; }
+.tbi-val { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tbi-val.gold { color:var(--gold); }
+.tbi-val.green { color:var(--green); }
+
+/* ── Toast ── */
+#toast {
+  position:fixed; bottom:70px; left:50%; transform:translateX(-50%);
+  background:rgba(6,10,24,0.92); color:#fff; padding:10px 20px;
+  border-radius:8px; font-size:12px; z-index:99999;
+  border:1px solid rgba(255,255,255,0.15); pointer-events:none;
+  opacity:0; transition:opacity 0.3s; max-width:90vw; text-align:center;
+}
+
+/* ── Responsive ── */
+@media(max-width:580px){
+  .cargo-grid { grid-template-columns:1fr; overflow-y:auto; }
+  .hbtn { width:90%; }
+  .maker-card {
+    position:fixed;
+    top:8px;
+    left:8px;
+    width:100%;
+    max-width:58vw;
+    padding:5px 7px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════ HOME ════════ -->
+<div id="s-home" class="screen active">
+  <div class="home-ocean-bg">
+    <div class="wave wave1"></div>
+    <div class="wave wave2"></div>
+    <div class="wave wave3"></div>
+  </div>
+  <div class="home-wrap">
+    <div class="home-logo-big">MSC</div>
+    <div class="home-sub">Mediterranean Shipping Company</div>
+    <div class="home-tag">Interactive Shipping Simulator · Germany Network</div>
+    <span class="home-ship">🚢</span>
+    <div class="home-btns">
+      <button class="hbtn hbtn-blue" onclick="goToCargoScreen()">
+        <span class="hbtn-ico">📦</span>
+        <span class="hbtn-txt">
+          <strong>Load & Ship Cargo</strong>
+          <span>Build your shipment, calculate cost, watch it sail</span>
+        </span>
+      </button>
+      <button class="hbtn hbtn-green" onclick="show('s-track-in')">
+        <span class="hbtn-ico">🗺️</span>
+        <span class="hbtn-txt">
+          <strong>Track My Shipment</strong>
+          <span>Live position on the world map — like FlightRadar</span>
+        </span>
+      </button>
+    </div>
+    <div class="maker-card">
+      <div class="maker-title">Creator</div>
+      <div class="maker-line"><strong>Name:</strong> Rudwan Barouni</div>
+      <div class="maker-line"><strong>Email:</strong> Rudwan.barouni@gmail.com</div>
+      <div class="maker-line"><strong>Phone:</strong> +387-61657883</div>
+      <div class="maker-note">Designed and developed by Rudwan Barouni. Copyright © 2026. All rights reserved.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ CARGO LOADER ════════ -->
+<div id="s-cargo" class="screen">
+  <div class="hdr">
+    <div class="hdr-logo">MSC</div>
+    <div class="hdr-title">📦 Cargo Loader & Cost Calculator</div>
+    <button class="hdr-back" onclick="show('s-home')">← Back</button>
+  </div>
+  <div class="cargo-grid">
+
+    <!-- LEFT: cargo palette -->
+    <div class="cpanel">
+      <div class="ptitle">🏭 Choose Cargo Items</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.3);flex-shrink:0">Tap or drag items into the container →</div>
+      <div class="items-grid" id="palette"></div>
+    </div>
+
+    <!-- CENTRE: container -->
+    <div class="cpanel">
+      <div class="ptitle">🟡 Container</div>
+      <div class="sz-row" id="sz-row">
+        <button class="sz-btn sel" data-sz="20" onclick="setSz(20,this)">20 ft<br><small style="opacity:.6">33 CBM</small></button>
+        <button class="sz-btn" data-sz="40" onclick="setSz(40,this)">40 ft<br><small style="opacity:.6">67 CBM</small></button>
+        <button class="sz-btn" data-sz="45" onclick="setSz(45,this)">40 HC<br><small style="opacity:.6">76 CBM</small></button>
+      </div>
+      <div class="cbox" id="cbox">
+        <div class="cbox-label">MSC CONTAINER</div>
+        <div class="cbox-stripes"></div>
+        <div class="cdrop" id="cdrop"
+          ondragover="cdOver(event)" ondrop="cdDrop(event)" ondragleave="cdLeave(event)">
+        </div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-lbl"><span>Volume</span><span id="vt">0 / 33 CBM</span></div>
+        <div class="bar-track"><div class="bar-fill bar-vol" id="vbar" style="width:0%"></div></div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-lbl"><span>Weight</span><span id="wt">0 kg</span></div>
+        <div class="bar-track"><div class="bar-fill bar-wt" id="wbar" style="width:0%"></div></div>
+      </div>
+      <button class="clear-link" onclick="clearCargo()">🗑️ Clear container</button>
+    </div>
+
+    <!-- RIGHT: cost -->
+    <div class="cpanel">
+      <div class="ptitle">💰 Cost Calculator</div>
+      <div style="flex-shrink:0">
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:3px">ORIGIN</div>
+        <select class="dest-sel" disabled style="opacity:.5"><option>Hamburg, Germany 🇩🇪</option></select>
+      </div>
+      <div style="flex-shrink:0">
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:3px">DESTINATION</div>
+        <select class="dest-sel" id="dsel" onchange="recalc()">
+          <option value="">— Select destination —</option>
+          <option value="tripoli">Tripoli, Libya 🇱🇾</option>
+          <option value="alexandria">Alexandria, Egypt 🇪🇬</option>
+          <option value="casablanca">Casablanca, Morocco 🇲🇦</option>
+          <option value="istanbul">Istanbul, Turkey 🇹🇷</option>
+          <option value="piraeus">Piraeus, Greece 🇬🇷</option>
+          <option value="jeddah">Jeddah, Saudi Arabia 🇸🇦</option>
+          <option value="dubai">Dubai, UAE 🇦🇪</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0">
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:3px">MAP IMAGE (OPTIONAL)</div>
+        <div class="map-tools">
+          <input id="mapUrl" class="map-url" type="text" placeholder="Paste licensed world-map URL">
+          <button class="map-btn" onclick="applyMapImage()">Apply</button>
+          <button class="map-btn" onclick="resetMapImage()">Reset</button>
+        </div>
+        <div class="map-note">Use only images you have permission to use. Shipment lanes are drawn automatically.</div>
+      </div>
+      <div style="flex-shrink:0">
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:3px">BRAND LOGO (OPTIONAL)</div>
+        <div class="map-tools">
+          <input id="logoUrl" class="map-url" type="text" placeholder="Paste official logo URL">
+          <button class="map-btn" onclick="applyBrandLogo()">Apply</button>
+          <button class="map-btn" onclick="resetBrandLogo()">Reset</button>
+        </div>
+        <div class="map-note">Use only the official logo you are authorized to use.</div>
+      </div>
+      <div class="calc-note" id="routeMeta">Select destination to calculate real route distance and ETA.</div>
+      <div class="cost-rows">
+        <div class="crow"><span id="clbl">Ocean freight (20ft)</span><span class="cv" id="c1">€ 0</span></div>
+        <div class="crow"><span>Cargo handling</span><span class="cv" id="c2">€ 0</span></div>
+        <div class="crow"><span>Weight surcharge</span><span class="cv" id="c3">€ 0</span></div>
+        <div class="crow"><span>Port + documentation</span><span class="cv" id="c4">€ 0</span></div>
+        <div class="crow"><span>Fuel surcharge (BAF 14%)</span><span class="cv" id="c5">€ 0</span></div>
+        <div class="crow total"><span>TOTAL ESTIMATE</span><span class="cv" id="ctot">€ 0</span></div>
+      </div>
+      <button class="send-btn" id="sendbtn" disabled onclick="launchVoyage()">
+        🚢 Send Shipment
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════ VOYAGE MAP ════════ -->
+<div id="s-voyage" class="screen">
+  <div class="hdr">
+    <div class="hdr-logo">MSC</div>
+    <div class="hdr-title">🌊 Voyage in Progress</div>
+    <button class="hdr-back" onclick="stopVoyage();show('s-home')">✕ End</button>
+  </div>
+  <canvas id="voyage-canvas"></canvas>
+  <div class="voy-bar">
+    <div class="vstat">
+      <span class="vstat-lbl">Origin</span>
+      <span class="vstat-val">Hamburg 🇩🇪</span>
+    </div>
+    <div class="vprog"><div class="vprog-fill" id="vpf" style="width:0%"></div></div>
+    <div class="vstat">
+      <span class="vstat-lbl">Destination</span>
+      <span class="vstat-val" id="vdest">—</span>
+    </div>
+    <div class="vstat" style="margin-left:10px">
+      <span class="vstat-lbl">Transit</span>
+      <span class="vstat-val" id="veta">—</span>
+    </div>
+    <div class="vstat">
+      <span class="vstat-lbl">Vessel</span>
+      <span class="vstat-val">MSC Lorena</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ TRACKER INPUT ════════ -->
+<div id="s-track-in" class="screen">
+  <div class="hdr">
+    <div class="hdr-logo">MSC</div>
+    <div class="hdr-title">🗺️ Shipment Tracker</div>
+    <button class="hdr-back" onclick="show('s-home')">← Back</button>
+  </div>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto">
+    <div class="tform">
+      <h2>📡 Track Your Shipment</h2>
+      <p>Enter your MSC tracking number to see the live position of your cargo on the world map — like FlightRadar24, but for ships.</p>
+      <div class="tin-row">
+        <input class="tin" id="tinput" type="text" placeholder="MSC123456" maxlength="12"
+          oninput="this.value=this.value.toUpperCase()"
+          onkeydown="if(event.key==='Enter')doTrack()">
+        <button class="tgo" onclick="doTrack()">TRACK 🔍</button>
+      </div>
+      <div class="terr" id="terr">❌ Tracking number not found. Use a demo number below.</div>
+      <div class="demos-title">Demo Tracking Numbers</div>
+      <div class="demo-row" onclick="fillDemo('MSC123456')">
+        <div><div class="demo-code">MSC123456</div><div class="demo-desc">Hamburg → Tripoli, Libya · MSC Lorena</div></div>
+        <span class="tag tag-transit">IN TRANSIT</span>
+      </div>
+      <div class="demo-row" onclick="fillDemo('MSC789012')">
+        <div><div class="demo-code">MSC789012</div><div class="demo-desc">Rotterdam → Alexandria, Egypt · MSC Splendida</div></div>
+        <span class="tag tag-transit">IN TRANSIT</span>
+      </div>
+      <div class="demo-row" onclick="fillDemo('MSC345678')">
+        <div><div class="demo-code">MSC345678</div><div class="demo-desc">Hamburg → Casablanca, Morocco · MSC Magnifica</div></div>
+        <span class="tag tag-arrived">ARRIVED</span>
+      </div>
+      <div class="demo-row" onclick="fillDemo('MSC111222')">
+        <div><div class="demo-code">MSC111222</div><div class="demo-desc">Hamburg → Istanbul, Turkey · MSC Orchestra</div></div>
+        <span class="tag tag-transit">IN TRANSIT</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ TRACKER MAP ════════ -->
+<div id="s-track-map" class="screen">
+  <div class="hdr">
+    <div class="hdr-logo">MSC</div>
+    <div class="hdr-title" id="tmaptitle">📡 Live Tracking</div>
+    <button class="hdr-back" onclick="stopTracking();show('s-track-in')">← Back</button>
+  </div>
+  <canvas id="track-canvas"></canvas>
+  <div class="track-bar">
+    <div class="tbi"><span class="tbi-lbl">Vessel</span><span class="tbi-val" id="ti0">—</span></div>
+    <div class="tbi"><span class="tbi-lbl">Origin</span><span class="tbi-val" id="ti1">—</span></div>
+    <div class="tbi"><span class="tbi-lbl">Destination</span><span class="tbi-val" id="ti2">—</span></div>
+    <div class="tbi"><span class="tbi-lbl">Status</span><span class="tbi-val green" id="ti3">—</span></div>
+    <div class="tbi"><span class="tbi-lbl">ETA</span><span class="tbi-val gold" id="ti4">—</span></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   DATA
+══════════════════════════════════════════════════════════ */
+const CARGO = [
+  {id:'box-s',  ico:'📦', name:'Small Box',   w:100,  cbm:1,  price:50 },
+  {id:'box-l',  ico:'🗃️', name:'Large Box',   w:500,  cbm:5,  price:150},
+  {id:'car',    ico:'🚗', name:'Car',          w:1500, cbm:15, price:600},
+  {id:'moto',   ico:'🏍️', name:'Motorcycle',  w:250,  cbm:3,  price:200},
+  {id:'barrel', ico:'🛢️', name:'Barrel',      w:200,  cbm:1,  price:80 },
+  {id:'crate',  ico:'📫', name:'Crate',        w:300,  cbm:2,  price:90 },
+];
+
+const CTRS = {
+  20:{lbl:'20ft',   cbm:33, maxW:28000, fixed:520, kmRate:0.18, handling:220, portDocs:130},
+  40:{lbl:'40ft',   cbm:67, maxW:26000, fixed:790, kmRate:0.26, handling:330, portDocs:180},
+  45:{lbl:'40ft HC',cbm:76, maxW:26000, fixed:910, kmRate:0.29, handling:390, portDocs:210},
+};
+
+const DESTS = {
+  tripoli:   {n:'Tripoli',    f:'🇱🇾',lat:32.90,lon:13.19,portFee:220 },
+  alexandria:{n:'Alexandria', f:'🇪🇬',lat:31.20,lon:29.92,portFee:250 },
+  casablanca:{n:'Casablanca', f:'🇲🇦',lat:33.57,lon:-7.59,portFee:210 },
+  istanbul:  {n:'Istanbul',   f:'🇹🇷',lat:41.01,lon:28.97,portFee:240 },
+  piraeus:   {n:'Piraeus',    f:'🇬🇷',lat:37.94,lon:23.64,portFee:200 },
+  jeddah:    {n:'Jeddah',     f:'🇸🇦',lat:21.49,lon:39.19,portFee:370 },
+  dubai:     {n:'Dubai',      f:'🇦🇪',lat:25.20,lon:55.27,portFee:460 },
+};
+
+const ORIGIN = {n:'Hamburg', lat:53.55, lon:9.99};
+
+const TRACKING = {
+  'MSC123456':{vessel:'MSC Lorena',    orig:ORIGIN,                           dest:DESTS.tripoli,    pct:0.45, status:'In Transit', eta:'3 days'},
+  'MSC789012':{vessel:'MSC Splendida', orig:{n:'Rotterdam',lat:51.92,lon:4.48},dest:DESTS.alexandria, pct:0.22, status:'In Transit', eta:'7 days'},
+  'MSC345678':{vessel:'MSC Magnifica', orig:ORIGIN,                           dest:DESTS.casablanca, pct:1.00, status:'Arrived',    eta:'Delivered'},
+  'MSC111222':{vessel:'MSC Orchestra', orig:ORIGIN,                           dest:DESTS.istanbul,   pct:0.12, status:'In Transit', eta:'7 days'},
+};
+
+const HUB_PORTS = {
+  hamburg: { n:'Hamburg', lat:53.55, lon:9.99 },
+  rotterdam: { n:'Rotterdam', lat:51.92, lon:4.48 },
+  trieste: { n:'Trieste', lat:45.65, lon:13.77 },
+  piraeus: { n:'Piraeus', lat:37.94, lon:23.64 },
+  tripoli: { n:'Tripoli', lat:32.90, lon:13.19 },
+  alexandria: { n:'Alexandria', lat:31.20, lon:29.92 },
+  casablanca: { n:'Casablanca', lat:33.57, lon:-7.59 },
+  istanbul: { n:'Istanbul', lat:41.01, lon:28.97 },
+  jeddah: { n:'Jeddah', lat:21.49, lon:39.19 },
+  dubai: { n:'Dubai', lat:25.20, lon:55.27 },
+};
+
+const SHIPPING_LANES = [
+  ['hamburg','tripoli'],
+  ['hamburg','alexandria'],
+  ['hamburg','casablanca'],
+  ['hamburg','istanbul'],
+  ['hamburg','piraeus'],
+  ['hamburg','jeddah'],
+  ['hamburg','dubai'],
+  ['rotterdam','tripoli'],
+  ['rotterdam','alexandria'],
+  ['rotterdam','casablanca'],
+  ['trieste','tripoli'],
+  ['trieste','alexandria'],
+  ['piraeus','alexandria'],
+  ['piraeus','jeddah'],
+];
+
+let mapImage = null;
+let mapImageReady = false;
+let brandLogoUrl = '';
+
+/* ══════════════════════════════════════════════════════════
+   WORLD MAP  — simplified continent polygons [lon, lat]
+══════════════════════════════════════════════════════════ */
+const LANDS = [
+  // North America
+  [[-168,72],[-140,70],[-110,73],[-85,73],[-65,68],[-55,50],[-60,45],[-67,44],[-70,42],[-75,36],[-80,25],[-85,18],[-95,15],[-88,15],[-83,10],[-77,8],[-78,8],[-80,8],[-80,12],[-85,20],[-90,20],[-97,20],[-100,26],[-105,20],[-110,23],[-118,30],[-118,35],[-122,37],[-124,45],[-130,50],[-145,60],[-168,72]],
+  // Greenland
+  [[-55,60],[-45,58],[-30,60],[-22,63],[-18,68],[-18,76],[-25,80],[-42,83],[-52,82],[-62,78],[-68,76],[-60,66],[-55,60]],
+  // South America
+  [[-80,12],[-65,12],[-55,6],[-50,0],[-35,-5],[-35,-55],[-55,-58],[-70,-55],[-75,-42],[-80,-30],[-80,12]],
+  // Europe (simplified)
+  [[-9,38],[-8,44],[-2,50],[2,52],[5,52],[8,55],[10,58],[15,57],[18,55],[20,56],[24,57],[26,60],[28,58],[25,54],[22,54],[18,52],[15,48],[14,44],[15,38],[18,38],[20,42],[22,42],[26,42],[28,42],[30,42],[32,44],[36,42],[28,38],[26,36],[23,36],[18,38],[12,38],[8,38],[5,42],[2,43],[-2,44],[-5,44],[-9,38]],
+  // Africa
+  [[-18,20],[-18,14],[-15,10],[-8,5],[0,5],[5,5],[10,4],[15,4],[25,2],[32,0],[38,-5],[42,-5],[42,-12],[35,-18],[30,-28],[20,-35],[15,-35],[10,-28],[5,-20],[0,-5],[-5,5],[-10,10],[-15,12],[-18,15],[-18,20],[-16,28],[-8,33],[-5,35],[0,36],[10,37],[12,37],[15,38],[20,37],[25,37],[30,32],[35,30],[38,25],[42,15],[45,12],[48,12],[43,12],[40,5],[35,-5],[-18,20]],
+  // Asia (northern mass)
+  [[28,42],[35,38],[40,38],[45,30],[50,25],[55,20],[60,15],[65,10],[70,8],[80,8],[85,10],[88,22],[90,22],[95,18],[100,5],[105,5],[110,2],[115,2],[120,10],[125,15],[128,22],[130,30],[130,40],[128,42],[120,40],[112,42],[100,50],[90,52],[80,50],[70,55],[60,55],[50,60],[45,65],[40,65],[35,67],[28,70],[25,65],[22,60],[25,55],[28,50],[28,42]],
+  // Asia (southeast peninsula)
+  [[100,5],[105,5],[108,12],[110,15],[115,12],[118,5],[115,2],[110,2],[105,5],[100,5]],
+  // Japan approx
+  [[130,31],[135,34],[140,38],[142,42],[140,43],[138,38],[132,32],[130,31]],
+  // Australia
+  [[115,-22],[120,-18],[125,-15],[130,-12],[135,-12],[140,-15],[145,-18],[148,-22],[150,-27],[155,-35],[150,-38],[145,-39],[140,-38],[135,-37],[130,-35],[125,-35],[120,-30],[115,-28],[115,-22]],
+  // New Zealand (tiny)
+  [[166,-46],[170,-44],[174,-40],[172,-37],[168,-42],[166,-46]],
+];
+
+/* ══════════════════════════════════════════════════════════
+   CANVAS UTILITY
+══════════════════════════════════════════════════════════ */
+function ll(lat, lon, W, H){
+  return { x:(lon+180)*(W/360), y:(90-lat)*(H/180) };
+}
+
+function drawMap(ctx, W, H){
+  if(mapImageReady && mapImage){
+    ctx.drawImage(mapImage, 0, 0, W, H);
+    // Darken custom image so lanes and ships stay readable.
+    ctx.fillStyle='rgba(4,10,22,0.38)';
+    ctx.fillRect(0,0,W,H);
+  }
+
+  // Ocean gradient
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#081828');
+  g.addColorStop(0.5,'#0a2035');
+  g.addColorStop(1,'#061420');
+  if(!mapImageReady){
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  // Subtle latitude grid
+  ctx.strokeStyle='rgba(255,255,255,0.03)'; ctx.lineWidth=0.8;
+  for(let lat=-90;lat<=90;lat+=30){
+    const y=(90-lat)*(H/180);
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+  for(let lon=-180;lon<=180;lon+=30){
+    const x=(lon+180)*(W/360);
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+  }
+  // Equator highlight
+  ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=1;
+  ctx.setLineDash([4,6]);
+  const ey=(90)*(H/180);
+  ctx.beginPath(); ctx.moveTo(0,ey); ctx.lineTo(W,ey); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Land
+  if(!mapImageReady){
+    ctx.fillStyle='#2a5c3a'; ctx.strokeStyle='#3a7a50'; ctx.lineWidth=0.8;
+    LANDS.forEach(pts=>{
+      ctx.beginPath();
+      pts.forEach((p,i)=>{
+        const {x,y}=ll(p[1],p[0],W,H);
+        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      });
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+    });
+  }
+
+  drawShippingLanes(ctx, W, H);
+}
+
+function drawShippingLanes(ctx, W, H){
+  ctx.save();
+  ctx.strokeStyle='rgba(0,154,222,0.32)';
+  ctx.lineWidth=1.3;
+  ctx.setLineDash([3,4]);
+  SHIPPING_LANES.forEach(([fromKey,toKey])=>{
+    const from = HUB_PORTS[fromKey];
+    const to = HUB_PORTS[toKey];
+    if(!from || !to) return;
+    const a = ll(from.lat, from.lon, W, H);
+    const b = ll(to.lat, to.lon, W, H);
+    const midLat = (from.lat + to.lat) / 2 - 5;
+    const midLon = (from.lon + to.lon) / 2 + 5;
+    const cp = ll(midLat, midLon, W, H);
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.quadraticCurveTo(cp.x, cp.y, b.x, b.y);
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+
+function drawPort(ctx,lat,lon,name,W,H,hl=false){
+  const {x,y}=ll(lat,lon,W,H);
+  if(hl){
+    ctx.beginPath(); ctx.arc(x,y,9,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,154,222,0.18)'; ctx.fill();
+  }
+  ctx.beginPath(); ctx.arc(x,y,hl?4:3,0,Math.PI*2);
+  ctx.fillStyle=hl?'#009ADE':'#f0a500';
+  ctx.fill(); ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.font=`${hl?'bold ':''}10px sans-serif`;
+  ctx.fillStyle='rgba(255,255,255,0.75)';
+  ctx.fillText(name, x+7, y+4);
+}
+
+function bezier(t, p0, cp, p1){
+  return {
+    x:(1-t)*(1-t)*p0.x + 2*(1-t)*t*cp.x + t*t*p1.x,
+    y:(1-t)*(1-t)*p0.y + 2*(1-t)*t*cp.y + t*t*p1.y,
+  };
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCREEN MANAGEMENT
+══════════════════════════════════════════════════════════ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function updateBranding(){
+  const textLogo = 'MSC';
+  const hdrs = document.querySelectorAll('.hdr-logo');
+  const home = document.querySelector('.home-logo-big');
+
+  hdrs.forEach(el=>{
+    if(brandLogoUrl){
+      el.innerHTML = `<img class="brand-logo-img" src="${brandLogoUrl}" alt="Company logo">`;
+    }else{
+      el.textContent = textLogo;
+    }
+  });
+
+  if(home){
+    if(brandLogoUrl){
+      home.innerHTML = `<img src="${brandLogoUrl}" alt="Company logo">`;
+    }else{
+      home.textContent = textLogo;
+    }
+  }
+}
+
+function applyBrandLogo(){
+  const input = document.getElementById('logoUrl');
+  const url = (input && input.value ? input.value : '').trim();
+  if(!url){
+    toast('Paste a logo URL first.');
+    return;
+  }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    brandLogoUrl = url;
+    localStorage.setItem('brandLogoUrl', brandLogoUrl);
+    updateBranding();
+    toast('Brand logo applied.');
+  };
+  img.onerror = () => {
+    toast('Logo failed to load. Check URL or permissions.');
+  };
+  img.src = url;
+}
+
+function resetBrandLogo(){
+  brandLogoUrl = '';
+  localStorage.removeItem('brandLogoUrl');
+  const input = document.getElementById('logoUrl');
+  if(input) input.value = '';
+  updateBranding();
+  toast('Reverted to text logo.');
+}
+
+/* ══════════════════════════════════════════════════════════
+   CARGO LOADER
+══════════════════════════════════════════════════════════ */
+let szKey=20, items=[], dragCI=null;
+let currentQuote=null;
+
+function goToCargoScreen(){
+  show('s-cargo');
+  buildPalette();
+  recalc();
+}
+
+function applyMapImage(){
+  const input = document.getElementById('mapUrl');
+  const url = (input && input.value ? input.value : '').trim();
+  if(!url){
+    toast('Paste a map image URL first.');
+    return;
+  }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    mapImage = img;
+    mapImageReady = true;
+    toast('Custom map applied.');
+  };
+  img.onerror = () => {
+    toast('Map image failed to load. Check URL or permissions.');
+  };
+  img.src = url;
+}
+
+function resetMapImage(){
+  mapImage = null;
+  mapImageReady = false;
+  const input = document.getElementById('mapUrl');
+  if(input) input.value = '';
+  toast('Reverted to built-in map.');
+}
+
+function initBranding(){
+  const saved = localStorage.getItem('brandLogoUrl') || '';
+  if(saved){
+    brandLogoUrl = saved;
+    const logoInput = document.getElementById('logoUrl');
+    if(logoInput) logoInput.value = saved;
+  }
+  updateBranding();
+}
+
+function buildPalette(){
+  const p=document.getElementById('palette'); p.innerHTML='';
+  CARGO.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='ci'; d.draggable=true; d.dataset.id=c.id;
+    d.innerHTML=`<div class="ci-ico">${c.ico}</div><div class="ci-name">${c.name}</div><div class="ci-sub">${c.w} kg · ${c.cbm} CBM</div><div class="ci-price">+€${c.price}</div>`;
+    d.addEventListener('dragstart',e=>{dragCI=c; e.dataTransfer.effectAllowed='copy';});
+    d.addEventListener('click',()=>addItem(c));
+    d.addEventListener('touchstart',tStart,{passive:false});
+    d.addEventListener('touchmove',tMove,{passive:false});
+    d.addEventListener('touchend',tEnd);
+    p.appendChild(d);
+  });
+}
+
+function haversineKm(lat1, lon1, lat2, lon2){
+  const R = 6371;
+  const dLat = (lat2-lat1) * Math.PI / 180;
+  const dLon = (lon2-lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function calcTransitDays(distanceKm){
+  const avgShipSpeedKmh = 33; // ~18 knots
+  const seaDays = distanceKm / (avgShipSpeedKmh * 24);
+  const weatherAndOpsFactor = 1.25;
+  const portHandlingDays = 1.2;
+  return Math.max(4, Math.ceil(seaDays * weatherAndOpsFactor + portHandlingDays));
+}
+
+function setSz(k,btn){
+  szKey=k;
+  document.querySelectorAll('.sz-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  // trim items if over new capacity
+  const C=CTRS[szKey];
+  while(totalCbm()>C.cbm || totalW()>C.maxW){ items.pop(); syncContainer(); }
+  recalc();
+}
+
+function totalCbm(){ return items.reduce((s,i)=>s+i.cbm,0); }
+function totalW(){   return items.reduce((s,i)=>s+i.w,0);   }
+
+function syncContainer(){
+  const dz=document.getElementById('cdrop');
+  dz.innerHTML='';
+  items.forEach(it=>{
+    const sp=document.createElement('span');
+    sp.className='item-placed'; sp.title=it.name; sp.textContent=it.ico;
+    dz.appendChild(sp);
+  });
+}
+
+function addItem(c){
+  const C=CTRS[szKey];
+  if(totalCbm()+c.cbm>C.cbm){ toast('⚠️ Container full! Try a larger container size.'); return; }
+  if(totalW()+c.w>C.maxW){    toast('⚠️ Weight limit exceeded!'); return; }
+  items.push(c);
+  const dz=document.getElementById('cdrop');
+  const sp=document.createElement('span');
+  sp.className='item-placed'; sp.title=c.name; sp.textContent=c.ico;
+  dz.appendChild(sp);
+  recalc(); dropSound();
+}
+
+function clearCargo(){
+  items=[]; document.getElementById('cdrop').innerHTML=''; recalc();
+}
+
+// Drag and drop – mouse
+function cdOver(e){ e.preventDefault(); document.getElementById('cdrop').classList.add('dover'); }
+function cdLeave(e){ document.getElementById('cdrop').classList.remove('dover'); }
+function cdDrop(e){
+  e.preventDefault(); document.getElementById('cdrop').classList.remove('dover');
+  if(dragCI){ addItem(dragCI); dragCI=null; }
+}
+
+// Touch
+let tGhost=null, tCI=null;
+function tStart(e){
+  e.preventDefault();
+  tCI=CARGO.find(c=>c.id===e.currentTarget.dataset.id);
+  tGhost=document.createElement('div');
+  tGhost.className='drag-ghost'; tGhost.textContent=tCI.ico;
+  document.body.appendChild(tGhost);
+  const t=e.touches[0];
+  tGhost.style.left=t.clientX+'px'; tGhost.style.top=t.clientY+'px';
+}
+function tMove(e){
+  e.preventDefault(); if(!tGhost) return;
+  const t=e.touches[0];
+  tGhost.style.left=t.clientX+'px'; tGhost.style.top=t.clientY+'px';
+}
+function tEnd(e){
+  if(!tGhost||!tCI) return;
+  const t=e.changedTouches[0];
+  const dz=document.getElementById('cdrop');
+  const r=dz.getBoundingClientRect();
+  if(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom) addItem(tCI);
+  document.body.removeChild(tGhost); tGhost=null; tCI=null;
+}
+
+function recalc(){
+  const C=CTRS[szKey];
+  const dKey=document.getElementById('dsel').value;
+  const D=DESTS[dKey]||null;
+  const cargoHandlingByItem = items.reduce((s,i)=>s+i.price,0);
+  const cargoHandlingByVolume = totalCbm() * 6;
+  const cargoHandling = Math.round(C.handling + cargoHandlingByItem + cargoHandlingByVolume);
+  const overweightKg = Math.max(0, totalW() - 10000);
+  const weightSurcharge = Math.round(overweightKg * 0.045);
+
+  let oceanFreight = 0;
+  let portDocs = 0;
+  let fuel = 0;
+  let total = 0;
+  let distanceKm = 0;
+  let transitDays = 0;
+
+  if(D){
+    distanceKm = haversineKm(ORIGIN.lat, ORIGIN.lon, D.lat, D.lon);
+    transitDays = calcTransitDays(distanceKm);
+    oceanFreight = Math.round(C.fixed + distanceKm * C.kmRate);
+    portDocs = Math.round(C.portDocs + D.portFee);
+    fuel = Math.round((oceanFreight + portDocs) * 0.14);
+    total = oceanFreight + cargoHandling + weightSurcharge + portDocs + fuel;
+    document.getElementById('routeMeta').textContent =
+      `Route: Hamburg -> ${D.n} | ${Math.round(distanceKm).toLocaleString()} km | ETA ${transitDays} days`;
+  }else{
+    document.getElementById('routeMeta').textContent = 'Select destination to calculate real route distance and ETA.';
+  }
+
+  currentQuote = D ? { total, distanceKm, transitDays } : null;
+
+  document.getElementById('clbl').textContent=`Ocean freight (${C.lbl})`;
+  document.getElementById('c1').textContent=`€ ${oceanFreight.toLocaleString()}`;
+  document.getElementById('c2').textContent=`€ ${cargoHandling.toLocaleString()}`;
+  document.getElementById('c3').textContent=`€ ${weightSurcharge.toLocaleString()}`;
+  document.getElementById('c4').textContent=`€ ${portDocs.toLocaleString()}`;
+  document.getElementById('c5').textContent=`€ ${fuel.toLocaleString()}`;
+  document.getElementById('ctot').textContent=`€ ${total.toLocaleString()}`;
+  // bars
+  const C2=CTRS[szKey];
+  document.getElementById('vbar').style.width=Math.min(totalCbm()/C2.cbm*100,100)+'%';
+  document.getElementById('wbar').style.width=Math.min(totalW()/C2.maxW*100,100)+'%';
+  document.getElementById('vt').textContent=`${totalCbm()} / ${C2.cbm} CBM`;
+  document.getElementById('wt').textContent=`${totalW().toLocaleString()} kg`;
+  document.getElementById('sendbtn').disabled=items.length===0||!dKey;
+}
+
+/* ══════════════════════════════════════════════════════════
+   VOYAGE ANIMATION
+══════════════════════════════════════════════════════════ */
+let voyAF=null, voyStart=null;
+const VOY_DUR=14000;
+
+function launchVoyage(){
+  const dKey=document.getElementById('dsel').value;
+  if(!dKey||items.length===0) return;
+  const D=DESTS[dKey];
+  document.getElementById('vdest').textContent=D.n+' '+D.f;
+  document.getElementById('veta').textContent=(currentQuote?currentQuote.transitDays:calcTransitDays(haversineKm(ORIGIN.lat, ORIGIN.lon, D.lat, D.lon)))+' days';
+  show('s-voyage');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>startVoyage(D)));
+  playFoghorn();
+}
+
+function startVoyage(D){
+  const cv=document.getElementById('voyage-canvas');
+  cv.width=cv.offsetWidth; cv.height=cv.offsetHeight;
+  const W=cv.width, H=cv.height, ctx=cv.getContext('2d');
+  const O=ll(ORIGIN.lat,ORIGIN.lon,W,H);
+  const Dp=ll(D.lat,D.lon,W,H);
+  // control point arcs southward over the sea
+  const CP=ll((ORIGIN.lat+D.lat)/2-10,(ORIGIN.lon+D.lon)/2+8,W,H);
+  voyStart=null;
+
+  function frame(ts){
+    if(!voyStart) voyStart=ts;
+    const pct=Math.min((ts-voyStart)/VOY_DUR,1);
+    ctx.clearRect(0,0,W,H);
+    drawMap(ctx,W,H);
+    // Secondary ports
+    [{n:'Rotterdam',lat:51.92,lon:4.48},{n:'Trieste',lat:45.65,lon:13.77}]
+      .forEach(p=>drawPort(ctx,p.lat,p.lon,p.n,W,H));
+    drawPort(ctx,ORIGIN.lat,ORIGIN.lon,ORIGIN.n,W,H,true);
+    drawPort(ctx,D.lat,D.lon,D.n+' '+D.f,W,H,true);
+    // Full route dashed
+    ctx.save(); ctx.setLineDash([5,8]); ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(O.x,O.y); ctx.quadraticCurveTo(CP.x,CP.y,Dp.x,Dp.y); ctx.stroke();
+    ctx.restore();
+    // Traveled (solid blue)
+    if(pct>0){
+      ctx.strokeStyle='#009ADE'; ctx.lineWidth=2.5;
+      ctx.beginPath();
+      for(let i=0;i<=60;i++){
+        const pt=bezier((i/60)*pct,O,CP,Dp);
+        i===0?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y);
+      }
+      ctx.stroke();
+    }
+    // Ship
+    const sp=bezier(pct,O,CP,Dp);
+    const sp1=bezier(Math.min(pct+0.01,1),O,CP,Dp);
+    const ang=Math.atan2(sp1.y-sp.y,sp1.x-sp.x);
+    ctx.save();
+    ctx.shadowColor='#009ADE'; ctx.shadowBlur=18;
+    ctx.font='26px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.translate(sp.x,sp.y); ctx.rotate(ang);
+    ctx.fillText(pct<1?'🚢':'⚓',0,0);
+    ctx.restore();
+    // Progress bar
+    document.getElementById('vpf').style.width=(pct*100)+'%';
+    if(pct<1){ voyAF=requestAnimationFrame(frame); }
+    else { setTimeout(()=>arrivedMsg(ctx,W,H,D),500); }
+  }
+  voyAF=requestAnimationFrame(frame);
+}
+
+function arrivedMsg(ctx,W,H,D){
+  const bw=340,bh=110,bx=W/2-bw/2,by=H/2-bh/2;
+  ctx.fillStyle='rgba(0,8,24,0.82)'; ctx.fillRect(bx,by,bw,bh);
+  ctx.strokeStyle='#00a86b'; ctx.lineWidth=2; ctx.strokeRect(bx,by,bw,bh);
+  ctx.fillStyle='#00a86b'; ctx.font='bold 20px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('✅  Shipment Arrived!',W/2,by+38);
+  ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.font='13px sans-serif';
+  ctx.fillText(`Delivered to ${D.n}, ${D.f}`,W/2,by+62);
+  ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font='11px sans-serif';
+  ctx.fillText('MSC — You Can Count On Us',W/2,by+84);
+  arrivedSound();
+}
+
+function stopVoyage(){
+  if(voyAF){ cancelAnimationFrame(voyAF); voyAF=null; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SHIPMENT TRACKER
+══════════════════════════════════════════════════════════ */
+let trkAF=null;
+
+function fillDemo(code){
+  document.getElementById('tinput').value=code;
+  document.getElementById('terr').style.display='none';
+}
+
+function doTrack(){
+  const num=document.getElementById('tinput').value.trim().toUpperCase();
+  const data=TRACKING[num];
+  if(!data){ document.getElementById('terr').style.display='block'; return; }
+  document.getElementById('terr').style.display='none';
+  document.getElementById('ti0').textContent=data.vessel;
+  document.getElementById('ti1').textContent=data.orig.n;
+  document.getElementById('ti2').textContent=data.dest.n+' '+data.dest.f;
+  document.getElementById('ti3').textContent=data.status;
+  document.getElementById('ti4').textContent=data.eta;
+  document.getElementById('tmaptitle').textContent=`📡 ${num} · ${data.vessel}`;
+  show('s-track-map');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>startTracking(data)));
+}
+
+function startTracking(data){
+  const cv=document.getElementById('track-canvas');
+  cv.width=cv.offsetWidth; cv.height=cv.offsetHeight;
+  const W=cv.width, H=cv.height, ctx=cv.getContext('2d');
+  const O=ll(data.orig.lat,data.orig.lon,W,H);
+  const Dp=ll(data.dest.lat,data.dest.lon,W,H);
+  const CP=ll((data.orig.lat+data.dest.lat)/2-10,(data.orig.lon+data.dest.lon)/2+8,W,H);
+
+  function frame(ts){
+    let p=data.pct;
+    if(data.pct<1) p=data.pct+Math.sin(ts*0.0004)*0.006; // subtle breathing
+
+    ctx.clearRect(0,0,W,H);
+    drawMap(ctx,W,H);
+    drawPort(ctx,data.orig.lat,data.orig.lon,data.orig.n,W,H,true);
+    drawPort(ctx,data.dest.lat,data.dest.lon,data.dest.n+' '+data.dest.f,W,H,true);
+
+    // Full route
+    ctx.save(); ctx.setLineDash([5,8]); ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(O.x,O.y); ctx.quadraticCurveTo(CP.x,CP.y,Dp.x,Dp.y); ctx.stroke();
+    ctx.restore();
+
+    // Traveled
+    ctx.strokeStyle='#009ADE'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    for(let i=0;i<=60;i++){
+      const pt=bezier((i/60)*p,O,CP,Dp);
+      i===0?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y);
+    }
+    ctx.stroke();
+
+    // Ship
+    const sp=bezier(p,O,CP,Dp);
+    const sp1=bezier(Math.min(p+0.01,1),O,CP,Dp);
+    const ang=Math.atan2(sp1.y-sp.y,sp1.x-sp.x);
+
+    // Pulsing ring
+    const pulse=(Math.sin(ts*0.003)+1)/2;
+    ctx.beginPath(); ctx.arc(sp.x,sp.y,14+pulse*7,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(0,154,222,${0.25+pulse*0.35})`; ctx.lineWidth=2; ctx.stroke();
+
+    ctx.save();
+    ctx.shadowColor='#009ADE'; ctx.shadowBlur=20;
+    ctx.font='24px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.translate(sp.x,sp.y); ctx.rotate(ang);
+    ctx.fillText(data.pct<1?'🚢':'⚓',0,0);
+    ctx.restore();
+
+    // Tooltip
+    const lw=130,lh=36,lx=sp.x+18,ly=sp.y-22;
+    ctx.fillStyle='rgba(0,6,20,0.78)'; ctx.fillRect(lx,ly,lw,lh);
+    ctx.strokeStyle='#009ADE'; ctx.lineWidth=1; ctx.strokeRect(lx,ly,lw,lh);
+    ctx.fillStyle='#009ADE'; ctx.font='bold 9px sans-serif'; ctx.textAlign='left';
+    ctx.fillText(data.vessel,lx+7,ly+13);
+    ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.font='9px sans-serif';
+    ctx.fillText(data.status+' · '+Math.round(p*100)+'%',lx+7,ly+26);
+
+    trkAF=requestAnimationFrame(frame);
+  }
+  trkAF=requestAnimationFrame(frame);
+}
+
+function stopTracking(){
+  if(trkAF){ cancelAnimationFrame(trkAF); trkAF=null; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   AUDIO  (Web Audio API — no files needed)
+══════════════════════════════════════════════════════════ */
+let AC=null;
+function getAC(){ if(!AC) AC=new(window.AudioContext||window.webkitAudioContext)(); return AC; }
+function unlockAudio(){
+  try{
+    const c = getAC();
+    if(c.state === 'suspended') c.resume();
+  }catch(e){}
+}
+
+function dropSound(){
+  try{
+    unlockAudio();
+    const c=getAC(), o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.frequency.setValueAtTime(500,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(220,c.currentTime+0.18);
+    g.gain.setValueAtTime(0.25,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);
+    o.start(); o.stop(c.currentTime+0.3);
+  }catch(e){}
+}
+
+function playFoghorn(){
+  try{
+    unlockAudio();
+    const c=getAC();
+    // Foghorn low note
+    [0, 1.8].forEach(t=>{
+      const o=c.createOscillator(), g=c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type='sawtooth'; o.frequency.value=t===0?75:60;
+      g.gain.setValueAtTime(0,c.currentTime+t);
+      g.gain.linearRampToValueAtTime(0.35,c.currentTime+t+0.15);
+      g.gain.setValueAtTime(0.35,c.currentTime+t+1.0);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+t+1.6);
+      o.start(c.currentTime+t); o.stop(c.currentTime+t+1.8);
+    });
+    // Seagulls / waves after
+    setTimeout(()=>playWaves(),1000);
+  }catch(e){}
+}
+
+function playWaves(){
+  try{
+    const c=getAC(), buf=c.createBuffer(1,c.sampleRate*2,c.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*0.25*Math.sin(i/d.length*Math.PI);
+    const src=c.createBufferSource(), f=c.createBiquadFilter();
+    f.type='lowpass'; f.frequency.value=350;
+    src.buffer=buf; src.connect(f); f.connect(c.destination); src.start();
+  }catch(e){}
+}
+
+function arrivedSound(){
+  try{
+    unlockAudio();
+    const c=getAC();
+    [523,659,784,1047].forEach((freq,i)=>{
+      const o=c.createOscillator(), g=c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.frequency.value=freq;
+      g.gain.setValueAtTime(0.2,c.currentTime+i*0.15);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.15+0.5);
+      o.start(c.currentTime+i*0.15);
+      o.stop(c.currentTime+i*0.15+0.6);
+    });
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════════ */
+let toastT;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.style.opacity='1';
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>el.style.opacity='0',3200);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESIZE  — re-init active canvas on window resize
+══════════════════════════════════════════════════════════ */
+window.addEventListener('resize',()=>{
+  if(document.getElementById('s-voyage').classList.contains('active')&&voyAF){
+    stopVoyage();
+    const dKey=document.getElementById('dsel').value;
+    if(dKey) startVoyage(DESTS[dKey]);
+  }
+  if(document.getElementById('s-track-map').classList.contains('active')&&trkAF){
+    const num=document.getElementById('tinput').value.trim().toUpperCase();
+    const data=TRACKING[num];
+    if(data){ stopTracking(); startTracking(data); }
+  }
+});
+
+initBranding();
+</script>
+</body>
+</html>
