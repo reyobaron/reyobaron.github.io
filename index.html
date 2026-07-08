@@ -564,6 +564,77 @@
       font-weight: 600;
     }
 
+    /* ─── CLIENT PROJECTS ─── */
+    .client-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+      max-width: 1060px;
+      margin: 48px auto 0;
+    }
+
+    .client-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .client-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+    }
+
+    .client-card-preview {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+      background: #f6f0e8;
+    }
+
+    .client-card-body {
+      padding: 24px;
+    }
+
+    .client-tag {
+      display: inline-block;
+      background: rgba(99,102,241,0.08);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .client-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .client-card p {
+      color: var(--gray-700);
+      font-size: 0.9rem;
+      margin-bottom: 18px;
+    }
+
+    .client-card-link {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--white);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .client-card-link:hover { opacity: 0.85; }
+
     /* ─── SERVICES ─── */
     .services { background: var(--dark); color: var(--white); }
     .services .section-label { color: var(--accent); }
@@ -959,13 +1030,14 @@
       <span class="nav-title notranslate" translate="no" lang="en">Barouni <span>Codes</span></span>
     </a>
     <ul class="nav-links">
-      <li><a href="#apps">Applications</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#clients">Clients</a></li>
       <li><a href="#services">Services</a></li>
       <li><a href="#work">My Work</a></li>
       <li><a href="#contact">Contact</a></li>
       <li><a href="#social">Social</a></li>
     </ul>
-    <a href="#apps" class="nav-app-shortcut">📲 Apps</a>
+    <a href="#projects" class="nav-app-shortcut">📁 Projects</a>
   </nav>
 
   <!-- HERO -->
@@ -979,8 +1051,8 @@
       <h1 class="notranslate" translate="no" lang="en">RUDWAN BAROUNI</h1>
       <p class="hero-role">Software Developer &bull; <span>Apps &bull; AI Bots &bull; Websites &bull; Enterprise Systems</span></p>
       <div class="hero-buttons">
-        <a href="#apps" class="btn btn-primary">
-          📲 My Applications
+        <a href="#projects" class="btn btn-primary">
+          📁 View Projects
         </a>
         <a href="#services" class="btn btn-outline">
           🚀 Services
@@ -993,156 +1065,268 @@
     <div class="scroll-hint">↓ Scroll to explore</div>
   </section>
 
-  <!-- APPLICATIONS -->
-  <section class="apps" id="apps">
-    <div class="section-label">Portfolio</div>
-    <h2 class="section-title">My Applications</h2>
-    <p class="section-subtitle">Apps I've built and published. Free to download and use on Android & iPhone.</p>
+  <!-- PROJECTS -->
+  <section class="apps" id="projects">
+    <div class="section-label">Main Panel</div>
+    <h2 class="section-title">Project Atlas</h2>
+    <p class="section-subtitle">A single workspace view of the active software projects I built in VS Code. Live demos open where available; source-only work is still shown here.</p>
 
     <div class="apps-grid">
+      <div class="app-card">
+        <div class="app-card-logo-emoji" aria-hidden="true">🏠</div>
+        <h3 class="notranslate" translate="no" lang="en">Moj Majstor</h3>
+        <span class="app-version">Flutter &bull; Marketplace App</span>
+        <p>Handyman marketplace for Bosnia with customer search, artisan profiles, booking flow, and multilingual support.</p>
+        <div class="app-languages">
+          <span class="lang-badge">Flutter</span>
+          <span class="lang-badge">Android</span>
+          <span class="lang-badge">iOS</span>
+          <span class="lang-badge">BS / EN / DE / AR</span>
+        </div>
+        <div class="app-stats">
+          <span>📦 Source project</span>
+          <span>💻 lib/</span>
+        </div>
+      </div>
 
-      <!-- MSC SHIPPING GAME -->
       <div class="app-card">
         <div class="app-card-logo-emoji" aria-hidden="true">🚢</div>
         <h3 class="notranslate" translate="no" lang="en">MSC Shipping Game</h3>
-        <span class="app-version">v1.0 &bull; Web App</span>
-        <p>Interactive cargo logistics simulator with container loading, route-based pricing, and live-style shipment tracking map.</p>
+        <span class="app-version">Web App &bull; Simulator</span>
+        <p>Interactive cargo logistics game with route planning, container loading, and shipment-style scoring.</p>
         <div class="app-languages">
-          <span class="lang-badge">🇬🇧 English</span>
-          <span class="lang-badge">🇧🇦 Bosnian-ready</span>
+          <span class="lang-badge">HTML</span>
+          <span class="lang-badge">JS</span>
+          <span class="lang-badge">Browser</span>
         </div>
         <div class="app-stats">
-          <span>📦 Web App</span>
-          <span>💻 Browser</span>
+          <span>📦 Live demo</span>
+          <span>💻 msc-shipping-game/</span>
         </div>
-        <a href="msc-shipping-game/index.html" class="download-btn download-btn-ios">
-          🌐 Open App
+        <a href="../msc-shipping-game/index.html" class="download-btn download-btn-ios">
+          🌐 Open Demo
         </a>
       </div>
 
-      <!-- GLOBAL APP -->
       <div class="app-card">
         <img src="assets/logo.png" alt="Top Maestro Global" class="app-card-logo">
         <h3 class="notranslate" translate="no" lang="en">Top Maestro</h3>
-        <span class="app-version">v1.0 &bull; Android & iPhone</span>
-        <p>Handyman marketplace — find craftsmen in Bosnia, Europe, and beyond. 7 languages supported.</p>
+        <span class="app-version">Mobile App &bull; Multilingual</span>
+        <p>Handyman marketplace edition with seven languages and a broad regional reach.</p>
         <div class="app-languages">
-          <span class="lang-badge">🇧🇦 Bosnian</span>
-          <span class="lang-badge">🇬🇧 English</span>
-          <span class="lang-badge">🇪🇸 Spanish</span>
-          <span class="lang-badge">🇩🇪 German</span>
-          <span class="lang-badge">🇷🇺 Russian</span>
-          <span class="lang-badge">🇷🇴 Romanian</span>
-          <span class="lang-badge">🇸🇦 Arabic</span>
+          <span class="lang-badge">Bosnian</span>
+          <span class="lang-badge">English</span>
+          <span class="lang-badge">German</span>
+          <span class="lang-badge">Arabic</span>
         </div>
         <div class="app-stats">
-          <span>📦 56 MB</span>
-          <span>📱 Android 6.0+</span>
+          <span>📦 APK + web</span>
+          <span>💻 topmeister/</span>
         </div>
-        <a href="downloads/Global-TopMaestro.apk" class="download-btn download-btn-android" download target="_blank" rel="noopener">
-          ⬇️ Download APK (Android)
-        </a>
         <a href="topmeister/" class="download-btn download-btn-ios">
           📱 Open App
         </a>
       </div>
 
-      <!-- ARABIC APP -->
       <div class="app-card">
         <img src="assets/arabic-logo.jpg" alt="عامل ماهر" class="app-card-logo">
         <h3 class="notranslate" translate="no" lang="ar" dir="rtl">عامل ماهر</h3>
-        <span class="app-version">v1.0 &bull; Android & iPhone</span>
-        <p>Arabic-first edition with full RTL support. Built for Libya and the Arabic-speaking world.</p>
+        <span class="app-version">Arabic App &bull; RTL Ready</span>
+        <p>Arabic-first version of the handyman marketplace, built for RTL layouts and local users.</p>
         <div class="app-languages">
-          <span class="lang-badge">🇸🇦 Arabic (Default)</span>
-          <span class="lang-badge">🇬🇧 English</span>
+          <span class="lang-badge">Arabic</span>
+          <span class="lang-badge">English</span>
+          <span class="lang-badge">RTL</span>
         </div>
         <div class="app-stats">
-          <span>📦 56 MB</span>
-          <span>📱 Android 6.0+</span>
+          <span>📦 APK + web</span>
+          <span>💻 amilmahir/</span>
         </div>
-        <a href="downloads/Arabic-TopMaestro.apk" class="download-btn download-btn-android" download target="_blank" rel="noopener">
-          ⬇️ Download APK (Android)
-        </a>
         <a href="amilmahir/" class="download-btn download-btn-ios">
           📱 Open App
         </a>
       </div>
 
-      <!-- EASY TO APPLY -->
       <div class="app-card">
         <img src="assets/easy-to-apply-logo.png" alt="Easy to Apply Germany" class="app-card-logo">
         <h3 class="notranslate" translate="no" lang="en">Easy to Apply</h3>
-        <span class="app-version">v1.0 &bull; Android &amp; Web</span>
-        <p>Job outreach tool for sending personalised applications to German companies. One clean email per company — no CC, no BCC. Built for job seekers moving to Germany.</p>
+        <span class="app-version">Job Tool &bull; Outreach</span>
+        <p>Automated job outreach helper for sending clean, personalised applications to German companies.</p>
         <div class="app-languages">
-          <span class="lang-badge">🇩🇪 German</span>
-          <span class="lang-badge">🇬🇧 English</span>
+          <span class="lang-badge">Web</span>
+          <span class="lang-badge">Android</span>
+          <span class="lang-badge">German / English</span>
         </div>
         <div class="app-stats">
-          <span>📦 Web App</span>
-          <span>💻 Android &amp; Browser</span>
+          <span>📦 Live demo</span>
+          <span>💻 easy-to-apply/</span>
         </div>
-        <a href="easy-to-apply/" class="download-btn download-btn-ios">
+        <a href="../easy-to-apply-mobile/" class="download-btn download-btn-ios">
           🌐 Open App
         </a>
       </div>
 
-      <!-- LEILA VIRTUAL SECRETARY -->
       <div class="app-card">
         <img src="assets/leila-secretary-logo.svg" alt="Leila Virtual Secretary" class="app-card-logo">
-        <h3 class="notranslate" translate="no" lang="en">Leila Virtual Secretary</h3>
-        <span class="app-version">v1.0 &bull; Web App</span>
-        <p>AI-style job assistant for Germany: job search actions, cover-letter generation, application tracker, interview prep, voice dictation, and spoken replies.</p>
+        <h3 class="notranslate" translate="no" lang="en">Leila Secretary</h3>
+        <span class="app-version">AI Assistant &bull; Web App</span>
+        <p>Voice-enabled job assistant with application tracking, letter generation, interview prep, and spoken replies.</p>
         <div class="app-languages">
-          <span class="lang-badge">🇬🇧 English</span>
-          <span class="lang-badge">🇩🇪 German</span>
-          <span class="lang-badge">🇸🇦 Arabic</span>
+          <span class="lang-badge">English</span>
+          <span class="lang-badge">German</span>
+          <span class="lang-badge">Arabic</span>
         </div>
         <div class="app-stats">
-          <span>📦 Web App</span>
-          <span>💻 Browser + Mic</span>
+          <span>📦 Live demo</span>
+          <span>💻 leila-secretary/</span>
         </div>
-        <a href="leila-secretary/" class="download-btn download-btn-ios">
-          🌐 Open App
+        <a href="../leila-secretary/index.html" class="download-btn download-btn-ios">
+          🌐 Open Demo
         </a>
       </div>
 
-      <!-- DEUTSCHSTART -->
       <div class="app-card">
         <img src="deutschstart/assets/logo.svg" alt="DeutschStart" class="app-card-logo">
         <h3 class="notranslate" translate="no" lang="en">DeutschStart</h3>
-        <span class="app-version">v1.0 &bull; Android &amp; Web</span>
-        <p>Practical German speaking app with sentence-by-sentence playback for daily life and interview communication.</p>
+        <span class="app-version">Language App &bull; Study Aid</span>
+        <p>Practical German speaking app with sentence playback for daily life and interview communication.</p>
         <div class="app-languages">
-          <span class="lang-badge">🇩🇪 German</span>
-          <span class="lang-badge">🇬🇧 English</span>
+          <span class="lang-badge">German</span>
+          <span class="lang-badge">English</span>
+          <span class="lang-badge">Web</span>
         </div>
         <div class="app-stats">
-          <span>📦 Web App</span>
-          <span>💻 Android, iPhone &amp; PC</span>
+          <span>📦 Live demo</span>
+          <span>💻 deutschstart/</span>
         </div>
         <a href="deutschstart/" class="download-btn download-btn-ios">
-          🌐 Open App
+          🌐 Open Demo
         </a>
       </div>
 
-    </div>
+      <div class="app-card">
+        <div class="app-card-logo-emoji" aria-hidden="true">🌐</div>
+        <h3 class="notranslate" translate="no" lang="en">Chill Co Site</h3>
+        <span class="app-version">Website &bull; Frontend</span>
+        <p>Marketing site build with a clean landing page, styling system, and visible content structure.</p>
+        <div class="app-languages">
+          <span class="lang-badge">HTML</span>
+          <span class="lang-badge">CSS</span>
+          <span class="lang-badge">JS</span>
+        </div>
+        <div class="app-stats">
+          <span>📦 Live demo</span>
+          <span>💻 chill-co-site/</span>
+        </div>
+        <a href="../chill-co-site/index.html" class="download-btn download-btn-ios">
+          🌐 Open Site
+        </a>
+      </div>
 
-    <div class="install-notice">
-      <h4>📋 How to Install</h4>
-      <p>
-        <strong>Android:</strong><br>
-        1. Tap <strong>Download APK</strong> on your Android phone.<br>
-        2. Open the downloaded file.<br>
-        3. If prompted, enable <code>Settings → Install unknown apps</code>.<br>
-        4. Tap <strong>Install</strong> and you're ready!<br><br>
-        <strong>iPhone:</strong><br>
-        1. Tap <strong>Open App</strong> — the app opens in Safari.<br>
-        2. Tap the <strong>Share</strong> button (⬆️) at the bottom.<br>
-        3. Select <strong>Add to Home Screen</strong>.<br>
-        4. Now it's on your home screen like a real app!
-      </p>
+      <div class="app-card">
+        <div class="app-card-logo-emoji" aria-hidden="true">🔗</div>
+        <h3 class="notranslate" translate="no" lang="en">Chill Co Share</h3>
+        <span class="app-version">Share Page &bull; Static HTML</span>
+        <p>Simple share landing page used for quick access, handoffs, and project presentation.</p>
+        <div class="app-languages">
+          <span class="lang-badge">HTML</span>
+          <span class="lang-badge">Static</span>
+          <span class="lang-badge">Fast load</span>
+        </div>
+        <div class="app-stats">
+          <span>📦 Live demo</span>
+          <span>💻 chill-co-share.html</span>
+        </div>
+        <a href="../chill-co-share.html" class="download-btn download-btn-ios">
+          🌐 Open Page
+        </a>
+      </div>
+
+      <div class="app-card">
+        <div class="app-card-logo-emoji" aria-hidden="true">🏢</div>
+        <h3 class="notranslate" translate="no" lang="en">German Starter Embassy Web</h3>
+        <span class="app-version">Web App &bull; Embassy Workflow</span>
+        <p>Immigration and embassy workflow site focused on structured guidance and user-facing utilities.</p>
+        <div class="app-languages">
+          <span class="lang-badge">Web</span>
+          <span class="lang-badge">English</span>
+          <span class="lang-badge">German</span>
+        </div>
+        <div class="app-stats">
+          <span>📦 Live demo</span>
+          <span>💻 german-starter-embassy-web/</span>
+        </div>
+        <a href="../german-starter-embassy-web/index.html" class="download-btn download-btn-ios">
+          🌐 Open Demo
+        </a>
+      </div>
+
+      <div class="app-card">
+        <div class="app-card-logo-emoji" aria-hidden="true">📮</div>
+        <h3 class="notranslate" translate="no" lang="en">Job Outreach Assistant</h3>
+        <span class="app-version">Python &bull; Productivity Tool</span>
+        <p>Assistant for job applications with templates, recipient lists, and automation helpers for outreach work.</p>
+        <div class="app-languages">
+          <span class="lang-badge">Python</span>
+          <span class="lang-badge">Flask</span>
+          <span class="lang-badge">Templates</span>
+        </div>
+        <div class="app-stats">
+          <span>📦 Source project</span>
+          <span>💻 job-outreach-assistant/</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-card-logo-emoji" aria-hidden="true">🛡️</div>
+        <h3 class="notranslate" translate="no" lang="en">Profile Moderation Center</h3>
+        <span class="app-version">Admin Tool &bull; Moderation</span>
+        <p>Moderation interface for reviewing profiles, workflows, and content decisions in one place.</p>
+        <div class="app-languages">
+          <span class="lang-badge">Admin</span>
+          <span class="lang-badge">Review flow</span>
+          <span class="lang-badge">Web</span>
+        </div>
+        <div class="app-stats">
+          <span>📦 Source project</span>
+          <span>💻 profile-moderation-center/</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-card-logo-emoji" aria-hidden="true">📊</div>
+        <h3 class="notranslate" translate="no" lang="en">Phone Stats JS</h3>
+        <span class="app-version">JavaScript &bull; Analytics</span>
+        <p>Device statistics and reporting experiments, including localized variants for Arabic and Spainmeister builds.</p>
+        <div class="app-languages">
+          <span class="lang-badge">JS</span>
+          <span class="lang-badge">Arabic</span>
+          <span class="lang-badge">Spanish</span>
+        </div>
+        <div class="app-stats">
+          <span>📦 Source project</span>
+          <span>💻 phone-stats-js*</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-card-logo-emoji" aria-hidden="true">🏪</div>
+        <h3 class="notranslate" translate="no" lang="en">One Euro Store</h3>
+        <span class="app-version">Storefront &bull; Catalog Site</span>
+        <p>Product showcase site with multiple item pages and a storefront-style browsing experience.</p>
+        <div class="app-languages">
+          <span class="lang-badge">HTML</span>
+          <span class="lang-badge">Catalog</span>
+          <span class="lang-badge">Retail</span>
+        </div>
+        <div class="app-stats">
+          <span>📦 Live demo</span>
+          <span>💻 one-euro-store/</span>
+        </div>
+        <a href="../one-euro-store/index.html" class="download-btn download-btn-ios">
+          🌐 Open Store
+        </a>
+      </div>
     </div>
   </section>
 
@@ -1293,6 +1477,25 @@
           <span class="tech-tag">RTL Support</span>
           <span class="tech-tag">7+ Languages</span>
           <span class="tech-tag">Localization</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENT PROJECTS -->
+  <section id="clients">
+    <div class="section-label">Client Work</div>
+    <h2 class="section-title">Client Projects</h2>
+    <p class="section-subtitle">Real websites and apps built for clients. Each project is live and in active use.</p>
+
+    <div class="client-grid">
+      <div class="client-card">
+        <img class="client-card-preview" src="https://reyobaron.github.io/chillandco/v2/assets/client/photo-01.jpeg" alt="Chill & Co website preview" />
+        <div class="client-card-body">
+          <span class="client-tag">Website</span>
+          <h3>Chill &amp; Co — Sarajevo</h3>
+          <p>A premium café &amp; dessert brand website for Chill &amp; Co in Ilidža, Sarajevo. Built with HTML, CSS and JavaScript. Features a bilingual interface (English / Bosnian), photo gallery, Google Maps, and franchise information.</p>
+          <a class="client-card-link" href="https://reyobaron.github.io/chillandco/v2/" target="_blank" rel="noopener noreferrer">View Live Site →</a>
         </div>
       </div>
     </div>
