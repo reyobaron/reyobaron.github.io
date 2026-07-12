@@ -182,6 +182,59 @@
       line-height: 1;
     }
 
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      color: var(--dark);
+      background: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 8px;
+      padding: 10px 20px;
+      line-height: 1;
+      transition: background 0.2s, transform 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-cta:hover { background: #d97706; transform: translateY(-1px); }
+
+    /* ─── STATS BAR ─── */
+    .stats-bar {
+      background: #080d17;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 24px;
+    }
+    .stats-bar-inner {
+      display: flex;
+      max-width: 860px;
+      margin: 0 auto;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 28px 24px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      flex: 1;
+      min-width: 120px;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
     /* ─── HERO ─── */
     .hero {
       position: relative;
@@ -977,6 +1030,8 @@
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .nav-app-shortcut { display: inline-flex; align-items: center; }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); padding: 18px 16px; }
+      .stat-item:last-child { border-bottom: none; }
       .apps-grid { grid-template-columns: 1fr; max-width: 420px; }
       .work-grid { grid-template-columns: 1fr; }
       .services-grid { grid-template-columns: 1fr; }
@@ -1037,7 +1092,8 @@
       <li><a href="#contact">Contact</a></li>
       <li><a href="#social">Social</a></li>
     </ul>
-    <a href="#projects" class="nav-app-shortcut">📁 Projects</a>
+    <a href="#projects" class="nav-app-shortcut">Projects</a>
+    <a href="#contact" class="nav-cta">Get a Quote</a>
   </nav>
 
   <!-- HERO -->
@@ -1049,27 +1105,37 @@
       </div>
       <div class="hero-brand notranslate" translate="no" lang="en">BAROUNI <span>CODES</span></div>
       <h1 class="notranslate" translate="no" lang="en">RUDWAN BAROUNI</h1>
-      <p class="hero-role">Software Developer &bull; <span>Apps &bull; AI Bots &bull; Websites &bull; Enterprise Systems</span></p>
+      <p class="hero-role">We Design, Build &amp; Deliver <span>Apps · Websites · AI Systems · Enterprise Software</span></p>
       <div class="hero-buttons">
-        <a href="#projects" class="btn btn-primary">
-          📁 View Projects
+        <a href="#contact" class="btn btn-primary">
+          Get a Quote
+        </a>
+        <a href="#clients" class="btn btn-outline">
+          Client Work
         </a>
         <a href="#services" class="btn btn-outline">
-          🚀 Services
-        </a>
-        <a href="#contact" class="btn btn-outline">
-          ✉️ Contact Me
+          Our Services
         </a>
       </div>
     </div>
     <div class="scroll-hint">↓ Scroll to explore</div>
   </section>
 
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stats-bar-inner">
+      <div class="stat-item"><div class="stat-number">2+</div><div class="stat-label">Live Client Sites</div></div>
+      <div class="stat-item"><div class="stat-number">10+</div><div class="stat-label">Projects Delivered</div></div>
+      <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">Countries Reached</div></div>
+      <div class="stat-item"><div class="stat-number">7</div><div class="stat-label">Languages Supported</div></div>
+    </div>
+  </div>
+
   <!-- PROJECTS -->
   <section class="apps" id="projects">
-    <div class="section-label">Main Panel</div>
-    <h2 class="section-title">Project Atlas</h2>
-    <p class="section-subtitle">A single workspace view of the active software projects I built in VS Code. Live demos open where available; source-only work is still shown here.</p>
+    <div class="section-label">Our Portfolio</div>
+    <h2 class="section-title">Projects We've Built</h2>
+    <p class="section-subtitle">A selection of apps, tools, and web platforms built and delivered across multiple industries and markets.</p>
 
     <div class="apps-grid">
       <div class="app-card">
@@ -1332,9 +1398,9 @@
 
   <!-- SERVICES -->
   <section class="services" id="services">
-    <div class="section-label">What I Offer</div>
-    <h2 class="section-title">Services</h2>
-    <p class="section-subtitle">Full-stack development solutions for businesses, organizations, and individuals.</p>
+    <div class="section-label">What We Deliver</div>
+    <h2 class="section-title">Our Services</h2>
+    <p class="section-subtitle">End-to-end digital solutions for businesses, factories, organizations, and government bodies.</p>
 
     <div class="services-grid">
       <div class="service-card">
@@ -1408,9 +1474,9 @@
 
   <!-- MY WORK -->
   <section id="work">
-    <div class="section-label">Technologies</div>
-    <h2 class="section-title">My Work & Skills</h2>
-    <p class="section-subtitle">Technologies and tools I use to build software solutions.</p>
+    <div class="section-label">Technologies &amp; Expertise</div>
+    <h2 class="section-title">How We Build It</h2>
+    <p class="section-subtitle">The tools, platforms, and technologies used to deliver professional software for every industry.</p>
 
     <div class="work-grid">
       <div class="work-card">
@@ -1516,9 +1582,9 @@
 
   <!-- CONTACT -->
   <section class="contact" id="contact">
-    <div class="section-label">Get in Touch</div>
-    <h2 class="section-title">Contact Me</h2>
-    <p class="section-subtitle">Have a project idea or want to collaborate? Reach out!</p>
+    <div class="section-label">Start a Project</div>
+    <h2 class="section-title">Get a Quote</h2>
+    <p class="section-subtitle">Tell us what you need. We'll get back to you within 24 hours with a clear proposal.</p>
 
     <div class="contact-content">
       <div class="contact-methods">
