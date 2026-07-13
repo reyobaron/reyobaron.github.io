@@ -199,6 +199,51 @@
 
     .nav-cta:hover { background: #d97706; transform: translateY(-1px); }
 
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 10px;
+    }
+
+    .lang-btn {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: transparent;
+      color: var(--white);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--dark);
+    }
+
+    body.rtl {
+      direction: rtl;
+      text-align: right;
+    }
+
+    body.rtl .nav {
+      direction: rtl;
+    }
+
+    body.rtl .nav-links,
+    body.rtl .hero-buttons,
+    body.rtl .social-grid,
+    body.rtl .contact-methods {
+      direction: rtl;
+    }
+
+    body.rtl .contact-info {
+      text-align: right;
+    }
+
     /* ─── STATS BAR ─── */
     .stats-bar {
       background: #080d17;
@@ -1030,6 +1075,8 @@
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .nav-app-shortcut { display: inline-flex; align-items: center; }
+      .lang-switch { margin-left: 8px; }
+      .lang-btn { padding: 5px 9px; font-size: 0.68rem; }
       .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); padding: 18px 16px; }
       .stat-item:last-child { border-bottom: none; }
       .apps-grid { grid-template-columns: 1fr; max-width: 420px; }
@@ -1095,15 +1142,19 @@
       <span class="nav-title notranslate" translate="no" lang="en">Barouni <span>Codes</span></span>
     </a>
     <ul class="nav-links">
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#clients">Clients</a></li>
-      <li><a href="#services">Services</a></li>
-      <li><a href="#work">My Work</a></li>
-      <li><a href="#contact">Contact</a></li>
-      <li><a href="#social">Social</a></li>
+      <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
+      <li><a href="#clients" data-i18n="nav.clients">Clients</a></li>
+      <li><a href="#services" data-i18n="nav.services">Services</a></li>
+      <li><a href="#work" data-i18n="nav.work">My Work</a></li>
+      <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+      <li><a href="#social" data-i18n="nav.social">Social</a></li>
     </ul>
-    <a href="#projects" class="nav-app-shortcut">Projects</a>
-    <a href="#contact" class="nav-cta">Get a Quote</a>
+    <a href="#projects" class="nav-app-shortcut" data-i18n="nav.projects">Projects</a>
+    <a href="#contact" class="nav-cta" data-i18n="cta.quote">Get a Quote</a>
+    <div class="lang-switch" aria-label="Language switcher">
+      <button type="button" class="lang-btn active" data-lang="en">EN</button>
+      <button type="button" class="lang-btn" data-lang="ar">AR</button>
+    </div>
   </nav>
 
   <!-- HERO -->
@@ -1113,40 +1164,40 @@
         <div class="hero-logo-circle"></div>
         <img src="assets/red-panda-codes.jpeg" alt="Red Panda Codes" class="hero-logo circuit-logo-image">
       </div>
-      <div class="hero-brand notranslate" translate="no" lang="en">Software Development Studio</div>
+      <div class="hero-brand notranslate" translate="no" lang="en" data-i18n="hero.studio">Software Development Studio</div>
       <h1 class="notranslate" translate="no" lang="en">BAROUNI <span style="color:var(--accent)">CODES</span></h1>
-      <p class="hero-founder">Founded &amp; led by <strong>Rudwan Barouni</strong> &mdash; Bosnia &amp; Herzegovina</p>
-      <p class="hero-role">We Design, Build &amp; Deliver <span>Apps · Websites · AI Systems · Enterprise Software</span></p>
+      <p class="hero-founder" data-i18n-html="hero.founder">Founded &amp; led by <strong>Rudwan Barouni</strong> &mdash; Bosnia &amp; Herzegovina</p>
+      <p class="hero-role" data-i18n-html="hero.role">We Design, Build &amp; Deliver <span>Apps · Websites · AI Systems · Enterprise Software</span></p>
       <div class="hero-buttons">
-        <a href="#contact" class="btn btn-primary">
+        <a href="#contact" class="btn btn-primary" data-i18n="cta.quote">
           Get a Quote
         </a>
-        <a href="#clients" class="btn btn-outline">
+        <a href="#clients" class="btn btn-outline" data-i18n="cta.clientWork">
           Client Work
         </a>
-        <a href="#services" class="btn btn-outline">
+        <a href="#services" class="btn btn-outline" data-i18n="cta.ourServices">
           Our Services
         </a>
       </div>
     </div>
-    <div class="scroll-hint">↓ Scroll to explore</div>
+    <div class="scroll-hint" data-i18n="hero.scroll">↓ Scroll to explore</div>
   </section>
 
   <!-- STATS BAR -->
   <div class="stats-bar">
     <div class="stats-bar-inner">
-      <div class="stat-item"><div class="stat-number">2+</div><div class="stat-label">Live Client Sites</div></div>
-      <div class="stat-item"><div class="stat-number">10+</div><div class="stat-label">Projects Delivered</div></div>
-      <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">Countries Reached</div></div>
-      <div class="stat-item"><div class="stat-number">7</div><div class="stat-label">Languages Supported</div></div>
+      <div class="stat-item"><div class="stat-number">2+</div><div class="stat-label" data-i18n="stats.clients">Live Client Sites</div></div>
+      <div class="stat-item"><div class="stat-number">10+</div><div class="stat-label" data-i18n="stats.projects">Projects Delivered</div></div>
+      <div class="stat-item"><div class="stat-number">4</div><div class="stat-label" data-i18n="stats.countries">Countries Reached</div></div>
+      <div class="stat-item"><div class="stat-number">7</div><div class="stat-label" data-i18n="stats.languages">Languages Supported</div></div>
     </div>
   </div>
 
   <!-- PROJECTS -->
   <section class="apps" id="projects">
-    <div class="section-label">Our Portfolio</div>
-    <h2 class="section-title">Projects We've Built</h2>
-    <p class="section-subtitle">A selection of apps, tools, and web platforms built and delivered across multiple industries and markets.</p>
+    <div class="section-label" data-i18n="portfolio.label">Our Portfolio</div>
+    <h2 class="section-title" data-i18n="portfolio.title">Projects We've Built</h2>
+    <p class="section-subtitle" data-i18n="portfolio.subtitle">A selection of apps, tools, and web platforms built and delivered across multiple industries and markets.</p>
 
     <div class="apps-grid">
       <div class="app-card">
@@ -1340,9 +1391,9 @@
 
   <!-- SERVICES -->
   <section class="services" id="services">
-    <div class="section-label">What We Deliver</div>
-    <h2 class="section-title">Our Services</h2>
-    <p class="section-subtitle">End-to-end digital solutions for businesses, factories, organizations, and government bodies.</p>
+    <div class="section-label" data-i18n="services.label">What We Deliver</div>
+    <h2 class="section-title" data-i18n="services.title">Our Services</h2>
+    <p class="section-subtitle" data-i18n="services.subtitle">End-to-end digital solutions for businesses, factories, organizations, and government bodies.</p>
 
     <div class="services-grid">
       <div class="service-card">
@@ -1416,9 +1467,9 @@
 
   <!-- MY WORK -->
   <section id="work">
-    <div class="section-label">Technologies &amp; Expertise</div>
-    <h2 class="section-title">How We Build It</h2>
-    <p class="section-subtitle">The tools, platforms, and technologies used to deliver professional software for every industry.</p>
+    <div class="section-label" data-i18n="work.label">Technologies &amp; Expertise</div>
+    <h2 class="section-title" data-i18n="work.title">How We Build It</h2>
+    <p class="section-subtitle" data-i18n="work.subtitle">The tools, platforms, and technologies used to deliver professional software for every industry.</p>
 
     <div class="work-grid">
       <div class="work-card">
@@ -1492,9 +1543,9 @@
 
   <!-- CLIENT PROJECTS -->
   <section id="clients">
-    <div class="section-label">Delivered for Clients</div>
-    <h2 class="section-title">Live Client Work</h2>
-    <p class="section-subtitle">Real websites built and delivered for real businesses. Each one is live, active, and in daily use by the client.</p>
+    <div class="section-label" data-i18n="clients.label">Delivered for Clients</div>
+    <h2 class="section-title" data-i18n="clients.title">Live Client Work</h2>
+    <p class="section-subtitle" data-i18n="clients.subtitle">Real websites built and delivered for real businesses. Each one is live, active, and in daily use by the client.</p>
 
     <div class="client-grid">
       <div class="client-card">
@@ -1521,31 +1572,31 @@
 
   <!-- CONTACT -->
   <section class="contact" id="contact">
-    <div class="section-label">Start a Project</div>
-    <h2 class="section-title">Get a Quote</h2>
-    <p class="section-subtitle">Tell us what you need. We'll get back to you within 24 hours with a clear proposal.</p>
+    <div class="section-label" data-i18n="contact.label">Start a Project</div>
+    <h2 class="section-title" data-i18n="contact.title">Get a Quote</h2>
+    <p class="section-subtitle" data-i18n="contact.subtitle">Tell us what you need. We'll get back to you within 24 hours with a clear proposal.</p>
 
     <div class="contact-content">
       <div class="contact-methods">
         <a href="mailto:rudwan.barouni@gmail.com" class="contact-item">
           <span class="contact-icon">📧</span>
           <div class="contact-info">
-            <div class="label">Email</div>
+            <div class="label" data-i18n="contact.email">Email</div>
             <div class="value">rudwan.barouni@gmail.com</div>
           </div>
         </a>
         <a href="https://wa.me/387616657883" target="_blank" class="contact-item">
           <span class="contact-icon">💬</span>
           <div class="contact-info">
-            <div class="label">WhatsApp</div>
+            <div class="label" data-i18n="contact.whatsapp">WhatsApp</div>
             <div class="value">+387 61 665 7883</div>
           </div>
         </a>
         <div class="contact-item">
           <span class="contact-icon">📍</span>
           <div class="contact-info">
-            <div class="label">Location</div>
-            <div class="value">Bosnia and Herzegovina</div>
+            <div class="label" data-i18n="contact.location">Location</div>
+            <div class="value" data-i18n="contact.locationValue">Bosnia and Herzegovina</div>
           </div>
         </div>
       </div>
@@ -1554,9 +1605,9 @@
 
   <!-- SOCIAL MEDIA -->
   <section id="social">
-    <div class="section-label">Follow Me</div>
-    <h2 class="section-title">Social Media</h2>
-    <p class="section-subtitle">Stay connected and follow my latest projects and updates.</p>
+    <div class="section-label" data-i18n="social.label">Follow Me</div>
+    <h2 class="section-title" data-i18n="social.title">Social Media</h2>
+    <p class="section-subtitle" data-i18n="social.subtitle">Stay connected and follow my latest projects and updates.</p>
 
     <div class="social-grid">
       <a href="https://ba.linkedin.com/in/rudwan-barouni-10b6a2a8" target="_blank" class="social-link">
@@ -1579,8 +1630,8 @@
       </span>
       <span class="footer-name notranslate" translate="no" lang="en">Barouni <span>Codes</span></span>
     </div>
-    <p><span class="notranslate" translate="no" lang="en">Rudwan Barouni</span> &mdash; IT Specialist</p>
-    <p>&copy; 2026 <span class="notranslate" translate="no" lang="en">Barouni Codes</span>. All rights reserved.</p>
+    <p><span class="notranslate" translate="no" lang="en">Rudwan Barouni</span> &mdash; <span data-i18n="footer.role">IT Specialist</span></p>
+    <p>&copy; 2026 <span class="notranslate" translate="no" lang="en">Barouni Codes</span>. <span data-i18n="footer.rights">All rights reserved.</span></p>
   </footer>
 
 <script>
@@ -1859,6 +1910,141 @@
     // Always show both APK and Open App buttons.
     androidBtns.forEach(function(btn) { btn.style.display = 'inline-flex'; });
     iosBtns.forEach(function(btn) { btn.style.display = 'inline-flex'; });
+  })();
+
+  // EN/AR language switch with RTL support.
+  (function() {
+    var langButtons = document.querySelectorAll('.lang-btn');
+    if (!langButtons.length) return;
+
+    var dict = {
+      en: {
+        'nav.projects': 'Projects',
+        'nav.clients': 'Clients',
+        'nav.services': 'Services',
+        'nav.work': 'My Work',
+        'nav.contact': 'Contact',
+        'nav.social': 'Social',
+        'cta.quote': 'Get a Quote',
+        'cta.clientWork': 'Client Work',
+        'cta.ourServices': 'Our Services',
+        'hero.studio': 'Software Development Studio',
+        'hero.founder': 'Founded &amp; led by <strong>Rudwan Barouni</strong> &mdash; Bosnia &amp; Herzegovina',
+        'hero.role': 'We Design, Build &amp; Deliver <span>Apps · Websites · AI Systems · Enterprise Software</span>',
+        'hero.scroll': '↓ Scroll to explore',
+        'stats.clients': 'Live Client Sites',
+        'stats.projects': 'Projects Delivered',
+        'stats.countries': 'Countries Reached',
+        'stats.languages': 'Languages Supported',
+        'portfolio.label': 'Our Portfolio',
+        'portfolio.title': "Projects We\'ve Built",
+        'portfolio.subtitle': 'A selection of apps, tools, and web platforms built and delivered across multiple industries and markets.',
+        'services.label': 'What We Deliver',
+        'services.title': 'Our Services',
+        'services.subtitle': 'End-to-end digital solutions for businesses, factories, organizations, and government bodies.',
+        'work.label': 'Technologies & Expertise',
+        'work.title': 'How We Build It',
+        'work.subtitle': 'The tools, platforms, and technologies used to deliver professional software for every industry.',
+        'clients.label': 'Delivered for Clients',
+        'clients.title': 'Live Client Work',
+        'clients.subtitle': 'Real websites built and delivered for real businesses. Each one is live, active, and in daily use by the client.',
+        'contact.label': 'Start a Project',
+        'contact.title': 'Get a Quote',
+        'contact.subtitle': "Tell us what you need. We\'ll get back to you within 24 hours with a clear proposal.",
+        'contact.email': 'Email',
+        'contact.whatsapp': 'WhatsApp',
+        'contact.location': 'Location',
+        'contact.locationValue': 'Bosnia and Herzegovina',
+        'social.label': 'Follow Me',
+        'social.title': 'Social Media',
+        'social.subtitle': 'Stay connected and follow my latest projects and updates.',
+        'footer.role': 'IT Specialist',
+        'footer.rights': 'All rights reserved.'
+      },
+      ar: {
+        'nav.projects': 'المشاريع',
+        'nav.clients': 'العملاء',
+        'nav.services': 'الخدمات',
+        'nav.work': 'أعمالنا',
+        'nav.contact': 'التواصل',
+        'nav.social': 'السوشيال',
+        'cta.quote': 'اطلب عرض سعر',
+        'cta.clientWork': 'أعمال العملاء',
+        'cta.ourServices': 'خدماتنا',
+        'hero.studio': 'استوديو تطوير البرمجيات',
+        'hero.founder': 'تأسيس وإدارة <strong>رضوان باروني</strong> &mdash; البوسنة والهرسك',
+        'hero.role': 'نصمم ونطور وننفذ <span>تطبيقات · مواقع · أنظمة ذكاء اصطناعي · حلول مؤسسية</span>',
+        'hero.scroll': '↓ مرر لاكتشاف المزيد',
+        'stats.clients': 'مواقع عملاء مباشرة',
+        'stats.projects': 'مشاريع منجزة',
+        'stats.countries': 'دول تم الوصول إليها',
+        'stats.languages': 'لغات مدعومة',
+        'portfolio.label': 'معرض أعمالنا',
+        'portfolio.title': 'المشاريع التي أنجزناها',
+        'portfolio.subtitle': 'مجموعة من التطبيقات والأدوات والمنصات التي قمنا ببنائها وتسليمها لقطاعات وأسواق مختلفة.',
+        'services.label': 'ما الذي نقدمه',
+        'services.title': 'خدماتنا',
+        'services.subtitle': 'حلول رقمية متكاملة للشركات والمصانع والمؤسسات والجهات الحكومية.',
+        'work.label': 'التقنيات والخبرة',
+        'work.title': 'كيف نبني الحلول',
+        'work.subtitle': 'الأدوات والمنصات والتقنيات التي نستخدمها لتقديم برمجيات احترافية لكل قطاع.',
+        'clients.label': 'تم التسليم للعملاء',
+        'clients.title': 'أعمال عملاء مباشرة',
+        'clients.subtitle': 'مواقع حقيقية تم بناؤها وتسليمها لشركات حقيقية وما زالت تعمل بشكل يومي.',
+        'contact.label': 'ابدأ مشروعك',
+        'contact.title': 'اطلب عرض سعر',
+        'contact.subtitle': 'أخبرنا بما تحتاجه وسنرد عليك خلال 24 ساعة بعرض واضح.',
+        'contact.email': 'البريد الإلكتروني',
+        'contact.whatsapp': 'واتساب',
+        'contact.location': 'الموقع',
+        'contact.locationValue': 'البوسنة والهرسك',
+        'social.label': 'تابعني',
+        'social.title': 'وسائل التواصل',
+        'social.subtitle': 'ابق على تواصل وتابع آخر المشاريع والتحديثات.',
+        'footer.role': 'متخصص تقنية معلومات',
+        'footer.rights': 'جميع الحقوق محفوظة.'
+      }
+    };
+
+    function applyLang(lang) {
+      var language = dict[lang] ? lang : 'en';
+      var table = dict[language];
+
+      document.documentElement.lang = language;
+      if (language === 'ar') {
+        document.documentElement.dir = 'rtl';
+        document.body.classList.add('rtl');
+      } else {
+        document.documentElement.dir = 'ltr';
+        document.body.classList.remove('rtl');
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (table[key]) el.textContent = table[key];
+      });
+
+      document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n-html');
+        if (table[key]) el.innerHTML = table[key];
+      });
+
+      langButtons.forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === language);
+      });
+
+      try { localStorage.setItem('barouniLang', language); } catch (e) {}
+    }
+
+    langButtons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        applyLang(btn.getAttribute('data-lang'));
+      });
+    });
+
+    var saved = 'en';
+    try { saved = localStorage.getItem('barouniLang') || 'en'; } catch (e) {}
+    applyLang(saved);
   })();
 </script>
 </body>
