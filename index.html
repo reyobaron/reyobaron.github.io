@@ -244,6 +244,12 @@
       text-align: right;
     }
 
+    body.rtl .ltr-value {
+      direction: ltr;
+      unicode-bidi: isolate;
+      text-align: left;
+    }
+
     /* ─── STATS BAR ─── */
     .stats-bar {
       background: #080d17;
@@ -853,6 +859,12 @@
       font-size: 1rem;
       font-weight: 600;
       color: var(--dark);
+    }
+
+    .ltr-value {
+      direction: ltr;
+      unicode-bidi: isolate;
+      display: inline-block;
     }
 
     /* ─── SOCIAL MEDIA ─── */
@@ -1582,14 +1594,14 @@
           <span class="contact-icon">📧</span>
           <div class="contact-info">
             <div class="label" data-i18n="contact.email">Email</div>
-            <div class="value">rudwan.barouni@gmail.com</div>
+            <div class="value ltr-value">rudwan.barouni@gmail.com</div>
           </div>
         </a>
         <a href="https://wa.me/387616657883" target="_blank" class="contact-item">
           <span class="contact-icon">💬</span>
           <div class="contact-info">
             <div class="label" data-i18n="contact.whatsapp">WhatsApp</div>
-            <div class="value">+387 61 665 7883</div>
+            <div class="value ltr-value">+387 61 665 7883</div>
           </div>
         </a>
         <div class="contact-item">
