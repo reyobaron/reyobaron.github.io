@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pride and Prejudice | €1 Store</title>
+    <link rel="icon" type="image/png" href="assets/euro-logo-clean.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .book-detail {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-top: 30px;
+        align-items: start;
+      }
+      .book-cover {
+        font-size: 120px;
+        background: linear-gradient(135deg, #ff8a00 0%, #ffb366 100%);
+        border-radius: 16px;
+        padding: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        box-shadow: 0 20px 50px rgba(255, 138, 0, 0.3);
+      }
+      .book-info h1 {
+        font-size: 32px;
+        margin: 0 0 16px 0;
+        color: var(--dark);
+      }
+      .book-author {
+        color: #666;
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+      .book-price {
+        font-size: 28px;
+        font-weight: 800;
+        color: #ff8a00;
+        margin-bottom: 20px;
+      }
+      .book-description {
+        color: #333;
+        line-height: 1.7;
+        margin-bottom: 30px;
+      }
+      .download-link {
+        display: inline-block;
+        background: #ff8a00;
+        color: white;
+        padding: 16px 32px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        margin-right: 12px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+      }
+      .download-link:hover {
+        background: #d65f00;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+      }
+      .book-details-list {
+        background: #f8f8f8;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+      }
+      .book-details-list p {
+        margin: 8px 0;
+        font-size: 14px;
+      }
+      .book-details-list strong {
+        color: var(--dark);
+      }
+      .breadcrumb {
+        color: #a3a3a3;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .breadcrumb a {
+        color: #ff8a00;
+        text-decoration: none;
+      }
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+      @media (max-width: 768px) {
+        .book-detail {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav-shell">
+      <div class="container nav-bar">
+        <a class="brand" href="index.html">
+          <img class="brand-logo" src="assets/euro-logo-clean.png" alt="€1 Store logo" />
+          <span class="brand-text"><span class="gold-text">€1</span> <span class="white-text">Store</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#categories">Categories</a>
+          <a href="index.html#benefits">Why us</a>
+        </nav>
+      </div>
+    </header>
+
+    <main style="padding-top: 80px;">
+      <section class="section">
+        <div class="container">
+          <div class="breadcrumb">
+            <a href="index.html">Store</a> / <a href="index.html#categories">Ebooks</a> / <a href="adult-books.html">Adult Books</a> / Pride and Prejudice
+          </div>
+
+          <div class="book-detail">
+            <div class="book-cover">📖</div>
+            
+            <div class="book-info">
+              <h1>Pride and Prejudice</h1>
+              <p class="book-author">by Jane Austen</p>
+              <div class="book-price">€1.00</div>
+              
+              <p class="book-description">
+                One of the most beloved novels of all time, Pride and Prejudice is the witty tale of Elizabeth Bennet and Mr. Darcy. Set in Regency England, this timeless romance explores themes of love, social class, and personal growth. Elizabeth's spirited personality and Darcy's gradual transformation make for one of literature's greatest love stories.
+              </p>
+
+              <div>
+                <a href="/downloads/Pride_and_Prejudice_pg1342.txt" class="download-link" download>⬇ Download TXT</a>
+                <a href="https://www.gutenberg.org/ebooks/1342" class="download-link" target="_blank">📖 Read Online</a>
+              </div>
+
+              <div class="book-details-list">
+                <p><strong>Format:</strong> Plain Text (.txt)</p>
+                <p><strong>Language:</strong> English</p>
+                <p><strong>License:</strong> Public Domain (Free to distribute)</p>
+                <p><strong>Author:</strong> Jane Austen (1775-1817)</p>
+                <p><strong>Publication Year:</strong> 1813</p>
+                <p><strong>Pages:</strong> ~432 (approximately)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" style="background: #f8f8f8;">
+        <div class="container">
+          <h2>About This Book</h2>
+          <p>
+            Pride and Prejudice follows Elizabeth Bennet as she navigates the pressures of marriage and society in Regency-era England. Through clever dialogue and sharp social commentary, Jane Austen crafts a story about overcoming first impressions and personal biases. The novel's examination of female independence and wit continues to resonate with modern readers over 200 years after its publication.
+          </p>
+          <p>
+            This is a public domain work, freely available and legally distributable. It's the perfect addition to any digital library.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h2>More from Adult Books</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+            <a href="book-moby-dick.html" style="text-align: center; text-decoration: none; color: var(--dark); padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+              <div style="font-size: 32px; margin-bottom: 8px;">🌊</div>
+              <div style="font-weight: 600; font-size: 12px;">Moby-Dick</div>
+            </a>
+            <a href="book-frankenstein.html" style="text-align: center; text-decoration: none; color: var(--dark); padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+              <div style="font-size: 32px; margin-bottom: 8px;">🧪</div>
+              <div style="font-weight: 600; font-size: 12px;">Frankenstein</div>
+            </a>
+            <a href="book-jane-eyre.html" style="text-align: center; text-decoration: none; color: var(--dark); padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+              <div style="font-size: 32px; margin-bottom: 8px;">🎩</div>
+              <div style="font-weight: 600; font-size: 12px;">Jane Eyre</div>
+            </a>
+            <a href="book-emma.html" style="text-align: center; text-decoration: none; color: var(--dark); padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+              <div style="font-size: 32px; margin-bottom: 8px;">✏️</div>
+              <div style="font-weight: 600; font-size: 12px;">Emma</div>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p>© <span id="year"></span> €1 Store</p>
+        <p>Games • Applications • Ebooks • AI Business Tools</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>€1 Store | Digital products marketplace</title>
+    <meta
+      name="description"
+      content="€1 Store offers games, applications, ebooks, and AI business tools in a premium modern storefront."
+    />
+    <link rel="icon" type="image/png" href="assets/euro-logo-clean.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="nav-shell">
+      <div class="container nav-bar">
+        <a class="brand" href="#top">
+          <img class="brand-logo" src="assets/euro-logo-clean.png" alt="€1 Store logo" />
+          <span class="brand-text"><span class="gold-text">€1</span> <span class="white-text">Store</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="#categories">Categories</a>
+          <a href="#featured">Featured</a>
+          <a href="#benefits">Why us</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-scene" aria-hidden="true">
+          <div class="scene-card scene-card-1">
+            <span class="scene-icon">📚</span>
+            <span class="scene-title">Ebooks</span>
+          </div>
+          <div class="scene-card scene-card-2">
+            <span class="scene-icon">🎮</span>
+            <span class="scene-title">Games</span>
+          </div>
+          <div class="scene-card scene-card-3">
+            <span class="scene-icon">📱</span>
+            <span class="scene-title">Apps</span>
+          </div>
+          <div class="scene-card scene-card-4">
+            <span class="scene-icon">🤖</span>
+            <span class="scene-title">AI Tools</span>
+          </div>
+        </div>
+        <div class="container hero-content">
+          <div class="hero-logo-wrap">
+            <img class="hero-logo" src="assets/euro-logo-clean.png" alt="€1 coin logo" />
+          </div>
+          <p class="hero-label">Digital marketplace • low price • instant downloads</p>
+          <h1><span class="gold-text">€1</span> <span class="white-text">Store</span></h1>
+          <p class="hero-subtitle">
+            Premium-looking digital products at simple affordable prices. Built for
+            games, apps, ebooks, and AI business tools.
+          </p>
+          <form class="hero-search" role="search">
+            <input type="search" placeholder="Search games, ebooks, apps, AI tools..." aria-label="Search products" />
+            <button type="submit">Search</button>
+          </form>
+          <div class="hero-buttons">
+            <a class="btn btn-primary" href="#categories">Explore products</a>
+            <a class="btn btn-secondary" href="#categories">View categories</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="categories" class="section catalog-section">
+        <div class="container">
+          <div class="section-heading">
+            <p class="section-tag">Shop by category</p>
+            <h2>Browse the store from top to down</h2>
+          </div>
+
+          <div class="filter-panel">
+            <span class="filter-label">Filter</span>
+            <button class="filter-chip active">Games</button>
+            <button class="filter-chip">Ebooks</button>
+            <button class="filter-chip">Applications</button>
+            <button class="filter-chip">AI Tools</button>
+          </div>
+
+          <div class="category-stack">
+            <div class="category-row">
+              <div class="category-intro">
+                <div class="category-icon">🎮</div>
+                <h3>Games</h3>
+                <p>Retro and simple fun for quick play across modern devices.</p>
+              </div>
+              <div class="category-strip">
+                <article class="game-visual-card featured-local-game">
+                  <div class="game-thumb image-thumb">
+                    <img class="product-thumb-image" src="assets/river-raid-icon.png" alt="River Raid 2 icon" />
+                  </div>
+                  <h4>River Raid 2</h4>
+                  <p class="card-meta">Android APK ready</p>
+                  <a class="mini-download-btn" href="downloads/river-raid-2-27.apk" download>Download APK</a>
+                </article>
+                <article class="game-visual-card featured-local-game">
+                  <div class="game-thumb image-thumb">
+                    <img class="product-thumb-image" src="assets/circus-charlie.jpg" alt="Circus Charlie artwork" />
+                  </div>
+                  <h4>Circus Charlie</h4>
+                  <p class="card-meta">Android APK ready</p>
+                  <a class="mini-download-btn" href="downloads/circus-charlie-1.5.apk" download>Download APK</a>
+                </article>
+                <article class="game-visual-card"><div class="game-thumb">🧱</div><h4>Brick Legend</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">🚀</div><h4>Space Dash</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">🐍</div><h4>Snake World</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">👾</div><h4>Retro Blast</h4></article>
+              </div>
+            </div>
+
+            <div class="category-row">
+              <div class="category-intro">
+                <div class="category-icon">📚</div>
+                <h3>Ebooks</h3>
+                <p>Digital guides, practical books, and classic literature collections.</p>
+              </div>
+              <div class="category-strip">
+                <a href="adult-books.html" class="game-visual-card" style="text-decoration: none; color: inherit; flex-direction: column; justify-content: flex-start;">
+                  <div style="font-size: 48px; margin-bottom: 10px;">👨‍💼</div>
+                  <h4 style="margin: 0; color: var(--dark);">Adult Books</h4>
+                  <p style="font-size: 12px; color: #666; margin: 8px 0 0 0;">11 classic novels</p>
+                </a>
+                <a href="kids-books.html" class="game-visual-card" style="text-decoration: none; color: inherit; flex-direction: column; justify-content: flex-start;">
+                  <div style="font-size: 48px; margin-bottom: 10px;">👧</div>
+                  <h4 style="margin: 0; color: var(--dark);">Kids Books</h4>
+                  <p style="font-size: 12px; color: #666; margin: 8px 0 0 0;">11 adventure tales</p>
+                </a>
+              </div>
+            </div>
+
+            <div class="category-row">
+              <div class="category-intro">
+                <div class="category-icon">📱</div>
+                <h3>Applications</h3>
+                <p>Simple utilities, calculators, templates, and helpful mini tools.</p>
+              </div>
+              <div class="category-strip">
+                <article class="game-visual-card"><div class="game-thumb">📱</div><h4>Budget Tracker</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">🧾</div><h4>Invoice Maker</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">✅</div><h4>Habit Board</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">🎯</div><h4>Goal Planner</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">📊</div><h4>Mini Dashboard</h4></article>
+              </div>
+            </div>
+
+            <div class="category-row">
+              <div class="category-intro">
+                <div class="category-icon">🤖</div>
+                <h3>AI Business Tools</h3>
+                <p>Prompt packs, assistant templates, and smart workflow boosters.</p>
+              </div>
+              <div class="category-strip">
+                <article class="game-visual-card"><div class="game-thumb">🤖</div><h4>Sales Prompts</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">💬</div><h4>Support Bot Kit</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">⚙️</div><h4>Reply Assistant</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">🪄</div><h4>Content Prompts</h4></article>
+                <article class="game-visual-card"><div class="game-thumb">📈</div><h4>Marketing AI</h4></article>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </section>
+
+      <section id="benefits" class="section">
+        <div class="container split-box">
+          <div>
+            <p class="section-tag">Why this works</p>
+            <h2>Simple offer, strong branding, fast buying</h2>
+            <ul class="benefit-list">
+              <li>Low price point that encourages impulse buys</li>
+              <li>Instant delivery for global customers</li>
+              <li>Modern design inspired by your existing website</li>
+              <li>Perfect fit for digital files and AI products</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h3>Recommended launch path</h3>
+            <p>Start with a website, connect Stripe or PayPal, upload your first 10 products, and promote on social media.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section cta-section">
+        <div class="container cta-box">
+          <p class="section-tag">Next step</p>
+          <h2>Your brand is ready to be turned into a full live store</h2>
+          <p>
+            This page is now styled to match the visual feel of your live portfolio.
+            It can be expanded into a real ecommerce website next.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p>© <span id="year"></span> €1 Store</p>
+        <p>Games • Applications • Ebooks • AI Business Tools</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

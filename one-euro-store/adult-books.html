@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adult Books | €1 Store</title>
+    <link rel="icon" type="image/png" href="assets/euro-logo-clean.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+      .book-card {
+        background: var(--white);
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: var(--dark);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .book-card:hover {
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+        transform: translateY(-4px);
+      }
+      .book-icon {
+        font-size: 48px;
+        line-height: 1;
+      }
+      .book-title {
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+      .download-btn {
+        background: #ff8a00;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: auto;
+      }
+      .download-btn:hover {
+        background: #d65f00;
+      }
+      .category-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 30px;
+      }
+      .category-header-icon {
+        font-size: 64px;
+        background: rgba(255, 138, 0, 0.15);
+        padding: 16px;
+        border-radius: 16px;
+      }
+      .breadcrumb {
+        color: #a3a3a3;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .breadcrumb a {
+        color: #ff8a00;
+        text-decoration: none;
+      }
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav-shell">
+      <div class="container nav-bar">
+        <a class="brand" href="index.html">
+          <img class="brand-logo" src="assets/euro-logo-clean.png" alt="€1 Store logo" />
+          <span class="brand-text"><span class="gold-text">€1</span> <span class="white-text">Store</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#categories">Categories</a>
+          <a href="index.html#benefits">Why us</a>
+        </nav>
+      </div>
+    </header>
+
+    <main style="padding-top: 100px;">
+      <section class="section" style="background: linear-gradient(135deg, #111827 0%, #1f2937 100%); padding: 40px 0; margin-top: -40px; padding-top: 120px;">
+        <div class="container">
+          <div class="breadcrumb">
+            <a href="index.html">Store</a> / <a href="index.html#categories">Ebooks</a> / Adult Books
+          </div>
+          <div class="category-header">
+            <div class="category-header-icon">👨‍💼</div>
+            <div>
+              <h1 style="color: white; margin: 0; font-size: 32px;">Adult Books</h1>
+              <p style="color: #cbd5e1; margin: 8px 0 0 0;">Classic literature, timeless novels, and thought-provoking stories</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="books-grid">
+            <a href="book-pride-prejudice.html" class="book-card">
+              <div class="book-icon">📖</div>
+              <div class="book-title">Pride and Prejudice</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-pride-prejudice.html'">View</button>
+            </a>
+            <a href="book-moby-dick.html" class="book-card">
+              <div class="book-icon">🌊</div>
+              <div class="book-title">Moby-Dick</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-moby-dick.html'">View</button>
+            </a>
+            <a href="book-frankenstein.html" class="book-card">
+              <div class="book-icon">🧪</div>
+              <div class="book-title">Frankenstein</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-frankenstein.html'">View</button>
+            </a>
+            <a href="book-emma.html" class="book-card">
+              <div class="book-icon">✏️</div>
+              <div class="book-title">Emma</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-emma.html'">View</button>
+            </a>
+            <a href="book-jane-eyre.html" class="book-card">
+              <div class="book-icon">🎩</div>
+              <div class="book-title">Jane Eyre</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-jane-eyre.html'">View</button>
+            </a>
+            <a href="book-don-quixote.html" class="book-card">
+              <div class="book-icon">⚔️</div>
+              <div class="book-title">Don Quixote</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-don-quixote.html'">View</button>
+            </a>
+            <a href="book-wuthering-heights.html" class="book-card">
+              <div class="book-icon">🌹</div>
+              <div class="book-title">Wuthering Heights</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-wuthering-heights.html'">View</button>
+            </a>
+            <a href="book-great-gatsby.html" class="book-card">
+              <div class="book-icon">✨</div>
+              <div class="book-title">Great Gatsby</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-great-gatsby.html'">View</button>
+            </a>
+            <a href="book-odyssey.html" class="book-card">
+              <div class="book-icon">🗺️</div>
+              <div class="book-title">The Odyssey</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-odyssey.html'">View</button>
+            </a>
+            <a href="book-sherlock-holmes.html" class="book-card">
+              <div class="book-icon">🔍</div>
+              <div class="book-title">Sherlock Holmes</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-sherlock-holmes.html'">View</button>
+            </a>
+            <a href="book-tale-two-cities.html" class="book-card">
+              <div class="book-icon">🏙️</div>
+              <div class="book-title">A Tale of Two Cities</div>
+              <button class="download-btn" onclick="event.preventDefault(); window.location.href='book-tale-two-cities.html'">View</button>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p>© <span id="year"></span> €1 Store</p>
+        <p>Games • Applications • Ebooks • AI Business Tools</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
