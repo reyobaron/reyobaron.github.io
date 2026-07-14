@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://reyobaron.github.io">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://reyobaron.github.io/assets/name-of-my-website-is-barouni-codes.png">
-  <link rel="icon" type="image/png" href="assets/name-of-my-website-is-barouni-codes.png">
+  <link rel="icon" type="image/svg+xml" href="assets/barouni-codes-editable-icon.svg">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -118,6 +118,12 @@
       position: relative;
       z-index: 1;
       border-radius: 50%;
+    }
+
+    .wordmark-logo-image {
+      position: relative;
+      z-index: 1;
+      border-radius: 0;
     }
 
     .logo-circuit-shell-nav {
@@ -328,7 +334,8 @@
 
     .hero-logo-wrap {
       position: relative;
-      width: 180px; height: 180px;
+      width: min(560px, 90vw);
+      height: auto;
       margin: 0 auto 24px;
       overflow: visible;
       display: flex;
@@ -354,7 +361,9 @@
     }
 
     .hero-logo {
-      width: 160px; height: 160px;
+      width: 100%;
+      max-width: 500px;
+      height: auto;
       object-fit: contain;
     }
 
@@ -1138,6 +1147,7 @@
       .work-grid { grid-template-columns: 1fr; }
       .services-grid { grid-template-columns: 1fr; }
       .hero { padding: 100px 20px 60px; }
+      .hero-logo-wrap { width: min(420px, 92vw); }
       section { padding: 64px 20px; }
       .social-grid { flex-direction: column; align-items: center; }
       .startup-title {
@@ -1199,7 +1209,7 @@
 
   <div class="startup-splash" id="startupSplash" aria-hidden="true">
     <div class="logo-circuit-shell logo-circuit-shell-startup startup-face">
-      <img src="assets/name-of-my-website-is-barouni-codes.png" alt="" class="startup-face-image circuit-logo-image">
+      <img src="assets/barouni-codes-editable-icon.svg" alt="" class="startup-face-image circuit-logo-image">
     </div>
     <div class="startup-title notranslate" translate="no" lang="en" aria-hidden="true">Barouni <span>Codes</span></div>
   </div>
@@ -1208,7 +1218,7 @@
   <nav class="nav">
     <a href="#" class="nav-brand">
       <span class="logo-circuit-shell logo-circuit-shell-nav">
-        <img src="assets/name-of-my-website-is-barouni-codes.png" alt="Barouni Codes" class="nav-logo circuit-logo-image">
+        <img src="assets/barouni-codes-editable-icon.svg" alt="Barouni Codes" class="nav-logo circuit-logo-image">
       </span>
       <span class="nav-title notranslate" translate="no" lang="en">Barouni <span>Codes</span></span>
     </a>
@@ -1231,9 +1241,8 @@
   <!-- HERO -->
   <section class="hero" id="home">
     <div class="hero-content">
-      <div class="hero-logo-wrap logo-circuit-shell logo-circuit-shell-hero">
-        <div class="hero-logo-circle"></div>
-        <img src="assets/name-of-my-website-is-barouni-codes.png" alt="Barouni Codes" class="hero-logo circuit-logo-image">
+      <div class="hero-logo-wrap">
+        <img src="assets/barouni-codes-editable.svg" alt="Barouni Codes" class="hero-logo wordmark-logo-image">
       </div>
       <div class="hero-brand notranslate" translate="no" lang="en" data-i18n="hero.studio">Software Development Studio</div>
       <h1 class="notranslate" translate="no" lang="en">BAROUNI <span style="color:var(--accent)">CODES</span></h1>
@@ -1646,7 +1655,7 @@
   <footer class="footer">
     <div class="footer-brand">
       <span class="logo-circuit-shell logo-circuit-shell-footer">
-        <img src="assets/name-of-my-website-is-barouni-codes.png" alt="Barouni Codes" class="footer-logo circuit-logo-image">
+        <img src="assets/barouni-codes-editable-icon.svg" alt="Barouni Codes" class="footer-logo circuit-logo-image">
       </span>
       <span class="footer-name notranslate" translate="no" lang="en">Barouni <span>Codes</span></span>
     </div>

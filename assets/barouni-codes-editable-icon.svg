@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320" role="img" aria-label="Barouni Codes icon">
+  <defs>
+    <linearGradient id="g_orange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F9B233"/>
+      <stop offset="1" stop-color="#F07E1A"/>
+    </linearGradient>
+    <linearGradient id="g_red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF6E5A"/>
+      <stop offset="1" stop-color="#F63E70"/>
+    </linearGradient>
+    <linearGradient id="g_purple" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7A2FE0"/>
+      <stop offset="1" stop-color="#C016B5"/>
+    </linearGradient>
+    <linearGradient id="g_blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17B7E8"/>
+      <stop offset="1" stop-color="#0A85D9"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(24 18)">
+    <polygon points="136,0 214,45 214,95 136,50" fill="url(#g_red)"/>
+    <polygon points="136,0 58,45 58,95 136,50" fill="url(#g_orange)"/>
+    <polygon points="58,95 58,176 136,220 136,141" fill="url(#g_purple)"/>
+    <polygon points="214,95 214,176 136,220 136,141" fill="url(#g_blue)"/>
+
+    <polygon points="136,56 190,87 190,123 136,92" fill="#F2F3F5"/>
+    <polygon points="82,87 136,118 136,154 82,123" fill="#F2F3F5"/>
+
+    <polygon points="58,176 90,194 58,213 26,194" fill="url(#g_blue)"/>
+    <polygon points="214,176 246,194 214,213 182,194" fill="url(#g_blue)"/>
+  </g>
+</svg>
