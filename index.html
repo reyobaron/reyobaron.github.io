@@ -69,6 +69,15 @@
       background: transparent;
     }
 
+    .nav-logo-wrap {
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
     .logo-circuit-shell {
       position: relative;
       display: inline-flex;
@@ -118,6 +127,12 @@
       position: relative;
       z-index: 1;
       border-radius: 50%;
+    }
+
+    .brand-icon-image {
+      position: relative;
+      z-index: 1;
+      border-radius: 0;
     }
 
     .wordmark-logo-image {
@@ -930,6 +945,15 @@
       background: transparent;
     }
 
+    .footer-logo-wrap {
+      width: 48px;
+      height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
     .logo-circuit-shell-footer {
       width: 48px;
       height: 48px;
@@ -1147,7 +1171,7 @@
     }
 
     @media (max-width: 480px) {
-      .logo-circuit-shell-nav {
+      .nav-logo-wrap {
         width: 38px;
         height: 38px;
       }
@@ -1201,8 +1225,8 @@
   <!-- NAVIGATION -->
   <nav class="nav">
     <a href="#" class="nav-brand">
-      <span class="logo-circuit-shell logo-circuit-shell-nav">
-        <img src="assets/barouni-codes-editable-icon.svg" alt="Barouni Codes" class="nav-logo circuit-logo-image">
+      <span class="nav-logo-wrap">
+        <img src="assets/barouni-codes-editable-icon.svg" alt="Barouni Codes" class="nav-logo brand-icon-image">
       </span>
       <span class="nav-title notranslate" translate="no" lang="en">Barouni <span>Codes</span></span>
     </a>
@@ -1225,9 +1249,8 @@
   <!-- HERO -->
   <section class="hero" id="home">
     <div class="hero-content">
-      <div class="hero-logo-wrap logo-circuit-shell logo-circuit-shell-hero">
-        <div class="hero-logo-circle"></div>
-        <img src="assets/barouni-codes-editable-icon.svg" alt="Barouni Codes" class="hero-logo circuit-logo-image">
+      <div class="hero-logo-wrap">
+        <img src="assets/barouni-codes-editable-icon.svg" alt="Barouni Codes" class="hero-logo brand-icon-image">
       </div>
       <div class="hero-brand notranslate" translate="no" lang="en" data-i18n="hero.studio">Software Development Studio</div>
       <h1 class="notranslate" translate="no" lang="en">BAROUNI <span style="color:var(--accent)">CODES</span></h1>
@@ -1639,8 +1662,8 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-brand">
-      <span class="logo-circuit-shell logo-circuit-shell-footer">
-        <img src="assets/barouni-codes-editable-icon.svg" alt="Barouni Codes" class="footer-logo circuit-logo-image">
+      <span class="footer-logo-wrap">
+        <img src="assets/barouni-codes-editable-icon.svg" alt="Barouni Codes" class="footer-logo brand-icon-image">
       </span>
       <span class="footer-name notranslate" translate="no" lang="en">Barouni <span>Codes</span></span>
     </div>
