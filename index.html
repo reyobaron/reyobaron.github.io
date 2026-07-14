@@ -310,14 +310,6 @@
       overflow: hidden;
     }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: url('assets/workers-bg.jpg') center/cover no-repeat;
-      opacity: 0.05;
-    }
-
     .hero::after {
       content: '';
       position: absolute;
@@ -334,8 +326,8 @@
 
     .hero-logo-wrap {
       position: relative;
-      width: min(560px, 90vw);
-      height: auto;
+      width: 180px;
+      height: 180px;
       margin: 0 auto 24px;
       overflow: visible;
       display: flex;
@@ -361,9 +353,8 @@
     }
 
     .hero-logo {
-      width: 100%;
-      max-width: 500px;
-      height: auto;
+      width: 160px;
+      height: 160px;
       object-fit: contain;
     }
 
@@ -1147,7 +1138,7 @@
       .work-grid { grid-template-columns: 1fr; }
       .services-grid { grid-template-columns: 1fr; }
       .hero { padding: 100px 20px 60px; }
-      .hero-logo-wrap { width: min(420px, 92vw); }
+      .hero-logo-wrap { width: 160px; height: 160px; }
       section { padding: 64px 20px; }
       .social-grid { flex-direction: column; align-items: center; }
       .startup-title {
@@ -1205,14 +1196,7 @@
     });
   </script>
 </head>
-<body class="preloading">
-
-  <div class="startup-splash" id="startupSplash" aria-hidden="true">
-    <div class="logo-circuit-shell logo-circuit-shell-startup startup-face">
-      <img src="assets/barouni-codes-editable-icon.svg" alt="" class="startup-face-image circuit-logo-image">
-    </div>
-    <div class="startup-title notranslate" translate="no" lang="en" aria-hidden="true">Barouni <span>Codes</span></div>
-  </div>
+<body>
 
   <!-- NAVIGATION -->
   <nav class="nav">
@@ -1241,8 +1225,9 @@
   <!-- HERO -->
   <section class="hero" id="home">
     <div class="hero-content">
-      <div class="hero-logo-wrap">
-        <img src="assets/barouni-codes-editable.svg" alt="Barouni Codes" class="hero-logo wordmark-logo-image">
+      <div class="hero-logo-wrap logo-circuit-shell logo-circuit-shell-hero">
+        <div class="hero-logo-circle"></div>
+        <img src="assets/barouni-codes-editable-icon.svg" alt="Barouni Codes" class="hero-logo circuit-logo-image">
       </div>
       <div class="hero-brand notranslate" translate="no" lang="en" data-i18n="hero.studio">Software Development Studio</div>
       <h1 class="notranslate" translate="no" lang="en">BAROUNI <span style="color:var(--accent)">CODES</span></h1>
