@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 500" width="1400" height="500" role="img" aria-label="Barouni Codes editable logo">
+  <defs>
+    <linearGradient id="g_orange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F9B233"/>
+      <stop offset="1" stop-color="#F07E1A"/>
+    </linearGradient>
+    <linearGradient id="g_red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF6E5A"/>
+      <stop offset="1" stop-color="#F63E70"/>
+    </linearGradient>
+    <linearGradient id="g_purple" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7A2FE0"/>
+      <stop offset="1" stop-color="#C016B5"/>
+    </linearGradient>
+    <linearGradient id="g_blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17B7E8"/>
+      <stop offset="1" stop-color="#0A85D9"/>
+    </linearGradient>
+
+    <style>
+      .wordmark-main {
+        font-family: "Poppins", "Avenir Next", "Segoe UI", Arial, sans-serif;
+        font-size: 134px;
+        font-weight: 600;
+        letter-spacing: 0;
+        fill: #333B46;
+      }
+      .wordmark-sub {
+        font-family: "Poppins", "Avenir Next", "Segoe UI", Arial, sans-serif;
+        font-size: 62px;
+        font-weight: 500;
+        letter-spacing: 20px;
+        fill: #8B9099;
+      }
+    </style>
+  </defs>
+
+  <!-- Editable icon group -->
+  <g id="icon" transform="translate(120 90)">
+    <!-- Hex frame segments -->
+    <polygon points="150,0 228,45 228,95 150,50" fill="url(#g_red)"/>
+    <polygon points="150,0 72,45 72,95 150,50" fill="url(#g_orange)"/>
+    <polygon points="72,95 72,176 150,220 150,141" fill="url(#g_purple)"/>
+    <polygon points="228,95 228,176 150,220 150,141" fill="url(#g_blue)"/>
+
+    <!-- Inner negative space style bars -->
+    <polygon points="150,56 204,87 204,123 150,92" fill="#F2F3F5"/>
+    <polygon points="96,87 150,118 150,154 96,123" fill="#F2F3F5"/>
+
+    <!-- Bottom accent pieces -->
+    <polygon points="72,176 104,194 72,213 40,194" fill="url(#g_blue)"/>
+    <polygon points="228,176 260,194 228,213 196,194" fill="url(#g_blue)"/>
+  </g>
+
+  <!-- Editable text group -->
+  <g id="wordmark" transform="translate(430 245)">
+    <text id="text-main" class="wordmark-main" x="0" y="0">barouni</text>
+    <text id="text-sub" class="wordmark-sub" x="370" y="74">CODES</text>
+  </g>
+</svg>
